@@ -1,14 +1,14 @@
-# ERC721-Multi-Class-Token
+# ERC721 Multi Class Token
 
 Native ERC721 token that allows tokens to be categorized in classes.
-ERC1155 is very similar to this type of token but the differences is 
-how tokens are handled. In ERC1155, a recipient and others could have 
-multiple copies of the same token ID. In ERC721, a unique token ID 
-could only have one owner and in an ERC721 multi class token a unique 
-token ID is simply assigned to a token class.
+ERC1155 is very similar to this type of token but the differences is how tokens
+are handled. In ERC1155, a recipient and others could have multiple copies of
+the same token ID. In ERC721, a unique token ID could only have one owner and in
+an ERC721 multi class token a unique token ID is simply assigned to a token
+class.
 
-When comparing the two, ERC1155 token IDs are token classes with no 
-unique tokens inside of them. Instead it basically says:
+When comparing the two, ERC1155 token IDs are token classes with no unique
+tokens inside of them. Instead it basically says:
 
  - `Jane owns 20 of token 1`,
  - `John owns 30 of token 1` and
@@ -27,139 +27,40 @@ In an ERC721 multi-class contract using the same example:
  - `Token 1 to token 50 are class 1 tokens` and
  - `Token 51 to token 60 are class 2 tokens`.
 
-Based on the above examples ERC1155 can be thought as monopoly money 
-and an ERC721 multi-class can be thought as real money with serial 
-numbers. Using an ERC721 multi-class made it so much easier to attach 
-a decentralized exchange.
+Based on the above examples ERC1155 can be thought as monopoly money and an
+ERC721 multi-class can be thought as real money with serial numbers. Using an
+ERC721 multi-class made it so much easier to attach a decentralized exchange.
+
+Default extensions include the following.
+
+ - **ERC721MultiClassData:** Ability for a class to have a reference *(like a URI)*
+ - **IERC721MultiClassSize:** Ability for a class to have a fixed token assignment size
+ - **ERC721MultiClassFees:** Ability for a class to have payment fees
+ - **ERC721MultiClassExchange:** Ability for tokens to be listed and exchanged *(considering fees)*
+ - **ERC721MultiClassDrop:** Ability for tokens in a class to be air dropped and redeemed
 
 ## Compatibility
 
-Solidity ^0.8.0
+ Solidity ^0.8.0
 
- - Recommended v0.8.9
+  - Recommended v0.8.4
 
-## 1. Install
-
-```bash
-$ cp .env.sample to .env
-$ npm install
-```
-
-## 2. Setup Development Test Wallet
-
-Switch your MetaMask to Ropsten network and get some ETH from the faucet.
-
-- [https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/](https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
-- [https://faucet.dimensions.network/](https://faucet.dimensions.network/)
-- [https://faucet.metamask.io/](https://faucet.metamask.io/)
-- [https://faucet.ropsten.be/](https://faucet.ropsten.be/)
-- [https://faucet.bitfwd.xyz/](https://faucet.bitfwd.xyz/)
-
-For MATIC theres only one place,
-[https://faucet.matic.network/](https://faucet.matic.network/). Make sure you
-choose `mumbai` from the options.
-
-> NOTE: You could be waiting between 10 to 30 minutes...
-
-## 3. Unit Testing
-
-Make sure in `.env`, change `NETWORK` to `hardhat`.
-
-```bash
-$ npm test
-```
-
-## 4. Developing on a Local Host Node
-
-Make sure in `.env`, change `NETWORK` to `localhost`. Then run the
-ethereum node server in a separate terminal with the following command.
-
-```bash
-$ npx hardhat node
-
-Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
-...
-```
-
-Next run the following script to deploy the contract to your local node and
-pre-populate the storage.
-
-```bash
-$ npx hardhat run scripts/deploy-populate-script.js --network localhost
-
-NFT contract deployed to (update .env): 0xCONTRACT_ADDRESS
-
-Token Classes:
-
- - Class 1 has a limit of 10 tokens
-   https://ipfs.io/ipfs/QmXrknumwVrvNhgPFUJSEoakGLsF4NJgQ6cgdx1SBA8PUJ
- - Class 2 has a limit of 3 tokens
-   https://ipfs.io/ipfs/QmXbPZG5kcB9bzJRz6rdgKoDSTNAufMCRojZcaRtwigfmV
-
-Fees:
-
- - 0xWALLET_ADDRESS_1 wants 20% of class 1
- - 0xWALLET_ADDRESS_2 wants 10% of class 1
-
-Minted Tokens:
-
- - 0xWALLET_ADDRESS_3 owns token 1 in class 1
- - 0xWALLET_ADDRESS_4 owns token 2 in class 1
- - 0xWALLET_ADDRESS_3 owns token 3 in class 2
- - 0xWALLET_ADDRESS_4 owns token 4 in class 2
-
-Air Drops:
-
- - 0xWALLET_ADDRESS_3 can redeem token 5 in class 1
- - 0xWALLET_ADDRESS_4 can redeem token 6 in class 1
-
-Order Book:
-
- - 0xWALLET_ADDRESS_3 listed token 1 for sale for 0.001 ETH/MATIC
-```
-
-Lastly, copy the contract hash found in the results given after running 
-`npx hardhat run scripts/deploy-populate-script.js --network localhost` 
-and paste it in `.env`. Lastly run the following command.
-
-```bash
-$ npm run dev
-```
-
-## 5. Developing on Polygon MATIC TestNet
-
-Make sure in `.env`, change `NETWORK` to `mumbai`.
-
-Next run the following script to deploy the contract to your local node and
-pre-populate the storage.
-
-```bash
-$ npx hardhat run scripts/deploy-script.js --network localhost
-```
-
-Lastly run the following command.
-
-```bash
-$ npm run dev
-```
-
-## API
+## Preset Marketplace
 
 The marketplace is the main contract that implements all the extensions.
 Feel free to make your own version and use less or attach other ERC721
-extensions to it. The following covers the methods defined in this 
-contract.
+extensions to it. The following covers the methods defined in this contract
 
 ### Deploy to Blockchain
 
- - **name (string):** ex. Your Project Title
- - **symbol (string):** ex. DEMO
+ - **name (string):** ex. GRYPH Streetwear
+ - **symbol (string):** ex. GRYPH
 
 ```js
 //load the factory
 const NFT = await ethers.getContractFactory('ERC721Marketplace')
 //deploy the contract
-const nft = await NFT.deploy('Your Project Title', 'DEMO')
+const nft = await NFT.deploy('GRYPH Streetwear', 'GRYPH')
 //wait for it to be confirmed
 await nft.deployed()
 
