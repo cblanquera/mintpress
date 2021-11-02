@@ -16,6 +16,12 @@ import "./MultiClass/abstractions/MultiClassExchange.sol";
 import "./MultiClass/abstractions/MultiClassSupply.sol";
 //For verifying messages in lazyMint
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+//For verifying messages in lazyMint
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+import "./Rarible/impl/RoyaltiesV2Impl.sol";
+import "./Rarible/LibPart.sol";
+import "./Rarible/LibRoyaltiesV2.sol";
 
 contract Mintpress is
   IERC2309,
@@ -23,33 +29,21 @@ contract Mintpress is
   ERC721Pausable,
   MultiClassURIStorage,
   MultiClassExchange,
-  MultiClassSupply
+  MultiClassSupply,
+  RoyaltiesV2Impl,
+  Ownable
 {
-  //in only the contract owner can add a fee
-  address private _admin;
-
-  modifier onlyAdmin {
-    require(
-      _msgSender() == _admin,
-      "Marketplace: Restricted method access to only the admin"
-    );
-    _;
-  }
-
   /**
    * @dev Constructor function
    */
   constructor (string memory _name, string memory _symbol)
-    ERC721(_name, _symbol)
-  {
-    _admin = _msgSender();
-  }
+    ERC721(_name, _symbol) {}
 
   /**
    * @dev Sets a fee that will be collected during the exchange method
    */
   function allocate(uint256 classId, address recipient, uint256 fee)
-    external virtual onlyAdmin
+    external virtual onlyOwner
   {
     _allocateFee(classId, recipient, fee);
   }
@@ -61,7 +55,7 @@ contract Mintpress is
     uint256[] memory classIds, 
     uint256 fromTokenId,
     address recipient
-  ) external virtual onlyAdmin {
+  ) external virtual onlyOwner {
     uint256 length = classIds.length;
 
     for (uint256 i = 0; i < length; i++) {
@@ -87,7 +81,7 @@ contract Mintpress is
     uint256 fromTokenId,
     uint256 toTokenId,
     address recipient
-  ) external virtual onlyAdmin {
+  ) external virtual onlyOwner {
     require(
       fromTokenId < toTokenId, 
       "Marketplace: Invalid token range."
@@ -120,7 +114,7 @@ contract Mintpress is
    * @dev Removes a fee
    */
   function deallocate(uint256 classId, address recipient)
-    external virtual onlyAdmin
+    external virtual onlyOwner
   {
     _deallocateFee(classId, recipient);
   }
@@ -159,7 +153,7 @@ contract Mintpress is
           )
         ),
         proof
-      ) == _admin,
+      ) == owner(),
       "Marketplace: Invalid proof."
     );
 
@@ -182,7 +176,7 @@ contract Mintpress is
    * @dev Mints `tokenId`, classifies it as `classId` and transfers to `recipient`
    */
   function mint(uint256 classId, uint256 tokenId, address recipient)
-    external virtual onlyAdmin
+    external virtual onlyOwner
   {
     //check size
     require(!classFilled(classId), "Marketplace: Class filled.");
@@ -203,7 +197,7 @@ contract Mintpress is
    *
    * - the caller must have the `PAUSER_ROLE`.
    */
-  function pause() public virtual onlyAdmin {
+  function pause() public virtual onlyOwner {
     _pause();
   }
 
@@ -211,7 +205,7 @@ contract Mintpress is
    * @dev References `classId` to `data` and `size`
    */
   function register(uint256 classId, uint256 size, string memory uri)
-    external virtual onlyAdmin
+    external virtual onlyOwner
   {
     _setClassURI(classId, uri);
     //if size was set, fix it. Setting a zero size means no limit.
@@ -250,7 +244,7 @@ contract Mintpress is
    *
    * - the caller must have the `PAUSER_ROLE`.
    */
-  function unpause() public virtual onlyAdmin {
+  function unpause() public virtual onlyOwner {
     _unpause();
   }
 
