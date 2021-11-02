@@ -3,21 +3,21 @@
 pragma solidity ^0.8.0;
 
 //IERC2309 interface
-import "./../../ERC2309/IERC2309.sol";
+import "./ERC2309/IERC2309.sol";
 //implementation of ERC721 where tokens can be irreversibly burned (destroyed).
-import "./../../ERC721/extensions/ERC721Burnable.sol";
+import "./ERC721/extensions/ERC721Burnable.sol";
 //implementation of ERC721 where transers can be paused
-import "./../../ERC721/extensions/ERC721Pausable.sol";
+import "./ERC721/extensions/ERC721Pausable.sol";
 //Abstract extension of MultiClass that allows a class to reference data (like a uri)
-import "./../abstractions/MultiClassURIStorage.sol";
+import "./MultiClass/abstractions/MultiClassURIStorage.sol";
 //Abstract extension of MultiClass that allows tokens to be listed and exchanged considering royalty fees
-import "./../abstractions/MultiClassExchange.sol";
+import "./MultiClass/abstractions/MultiClassExchange.sol";
 //Abstract extension of MultiClass that manages class sizes
-import "./../abstractions/MultiClassSupply.sol";
+import "./MultiClass/abstractions/MultiClassSupply.sol";
 //For verifying messages in lazyMint
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-contract Marketplace is
+contract Mintpress is
   IERC2309,
   ERC721Burnable,
   ERC721Pausable,
