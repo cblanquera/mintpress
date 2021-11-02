@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.0;
 
+//IERC2981 interface
+import "./ERC2981/IERC2981.sol";
 //IERC2309 interface
 import "./ERC2309/IERC2309.sol";
 //implementation of ERC721 where tokens can be irreversibly burned (destroyed).
@@ -24,6 +26,7 @@ import "./Rarible/LibRoyaltiesV2.sol";
 import "./Rarible/RoyaltiesV2.sol";
 
 contract Mintpress is
+  IERC2981,
   IERC2309,
   ERC721Burnable,
   ERC721Pausable,
@@ -133,6 +136,9 @@ contract Mintpress is
     _exchange(tokenId, msg.value);
   }
 
+  /**
+   * @dev implements Rari getRaribleV2Royalties()
+   */
   function getRaribleV2Royalties(uint256 tokenId) override external view returns (LibPart.Part[] memory) {
     uint256 classId = classOf(tokenId);
     uint256 size = _recipients[classId].length;
@@ -227,6 +233,28 @@ contract Mintpress is
     if (size > 0) {
       _fixClassSize(classId, size);
     }
+  }
+
+  /**
+   * @dev implements ERC2981 royaltyInfo()
+   */
+  function royaltyInfo(
+    uint256 _tokenId,
+    uint256 _salePrice
+  ) external view returns (
+    address receiver,
+    uint256 royaltyAmount
+  ) {
+    uint256 classId = classOf(_tokenId);
+    if (_recipients[classId].length == 0) {
+      return (address(0), 0);
+    }
+
+    address recipient = _recipients[classId][0];
+    return (
+      payable(recipient), 
+      (_salePrice * _fee[classId][recipient]) / 10000
+    );
   }
 
   /**
