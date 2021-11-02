@@ -6,9 +6,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /**
- * @dev Required interface of an IERC721MultiClass compliant contract.
+ * @dev Required interface of an MultiClass compliant contract.
  */
-interface IERC721MultiClass is IERC721 {
+interface IMultiClass is IERC721 {
   /**
    * @dev Returns the class given `tokenId`
    */

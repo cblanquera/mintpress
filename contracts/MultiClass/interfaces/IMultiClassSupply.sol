@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-//IERC721MultiClass interface
-import "./IERC721MultiClass.sol";
+//IMultiClass interface
+import "./IMultiClass.sol";
 
 /**
- * @dev Required interface of an IERC721MultiClassSize compliant contract.
+ * @dev Required interface of an MultiClassSupply compliant contract.
  */
-interface IERC721MultiClassSize is IERC721MultiClass {
+interface IMultiClassSupply is IMultiClass {
   /**
    * @dev Returns the total possible supply size of `classId`
    */

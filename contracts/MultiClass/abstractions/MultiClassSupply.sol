@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-//IERC721MultiClass interface
-import "./../interfaces/IERC721MultiClassSize.sol";
+//IMultiClass interface
+import "./../interfaces/IMultiClassSupply.sol";
 
 /**
- * @dev Abstract extension of ERC721MultiClass that manages class sizes
+ * @dev Abstract extension of MultiClass that manages class sizes
  */
-abstract contract ERC721MultiClassSize is IERC721MultiClassSize {
+abstract contract MultiClassSupply is IMultiClassSupply {
   //index mapping of classId to current supply size
   mapping(uint256 => uint256) private _supply;
   //mapping of classId to total supply size
@@ -41,7 +41,7 @@ abstract contract ERC721MultiClassSize is IERC721MultiClassSize {
   function _fixClassSize(uint256 classId, uint256 size) internal virtual {
     require (
       _size[classId] == 0,
-      "ERC721MultiClassSize: Class is already sized."
+      "MultiClassSize: Class is already sized."
     );
     _size[classId] = size;
   }
@@ -53,7 +53,7 @@ abstract contract ERC721MultiClassSize is IERC721MultiClassSize {
     uint256 size = _supply[classId] + amount;
     require(
       _size[classId] == 0 || size <= _size[classId],
-      "ERC721MultiClassSize: Amount overflows class size."
+      "MultiClassSize: Amount overflows class size."
     );
     _supply[classId] = size;
   }

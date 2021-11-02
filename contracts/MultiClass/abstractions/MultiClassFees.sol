@@ -2,16 +2,16 @@
 
 pragma solidity ^0.8.0;
 
-//IERC721MultiClass interface
-import "./../interfaces/IERC721MultiClassFees.sol";
-//abstraction of ERC721MultiClass
-import "./ERC721MultiClass.sol";
+//IMultiClass interface
+import "./../interfaces/IMultiClassFees.sol";
+//abstraction of MultiClass
+import "./MultiClass.sol";
 
 /**
- * @dev Abstract extension of ERC721MultiClass that attaches royalty fees
+ * @dev Abstract extension of MultiClass that attaches royalty fees
  */
-abstract contract ERC721MultiClassFees is
-  ERC721MultiClass, IERC721MultiClassFees
+abstract contract MultiClassFees is
+  MultiClass, IMultiClassFees
 {
   //10000 means 100.00%
   uint256 private constant TOTAL_ALLOWABLE_FEES = 10000;
@@ -46,7 +46,7 @@ abstract contract ERC721MultiClassFees is
   {
     require(
       fee > 0,
-      "ERC721MultiClassFees: Fee should be more than 0"
+      "MultiClassFees: Fee should be more than 0"
     );
 
     //if no recipient
@@ -70,7 +70,7 @@ abstract contract ERC721MultiClassFees is
     //safe check
     require(
       _fees[classId] <= TOTAL_ALLOWABLE_FEES,
-      "ERC721MultiClassFees: Exceeds allowable fees"
+      "MultiClassFees: Exceeds allowable fees"
     );
   }
 
@@ -82,7 +82,7 @@ abstract contract ERC721MultiClassFees is
     //dont have to pay gas on things that dont matter
     require(
       _fee[classId][recipient] != 0,
-      "ERC721MultiClassFees: Recipient has no fees"
+      "MultiClassFees: Recipient has no fees"
     );
     //deduct total fees
     _fees[classId] -= _fee[classId][recipient];
@@ -114,7 +114,7 @@ abstract contract ERC721MultiClassFees is
   {
     //get class from token
     uint256 classId = classOf(tokenId);
-    require(classId != 0, "ERC721MultiClassFees: Class does not exist");
+    require(classId != 0, "MultiClassFees: Class does not exist");
 
     //placeholder for recipient in the loop
     address recipient;

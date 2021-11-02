@@ -3,27 +3,27 @@
 pragma solidity ^0.8.0;
 
 //IERC2309 interface
-import "../interfaces/IERC2309.sol";
+import "./../../ERC2309/IERC2309.sol";
 //implementation of ERC721 where tokens can be irreversibly burned (destroyed).
-import "./../abstractions/ERC721Burnable.sol";
+import "./../../ERC721/extensions/ERC721Burnable.sol";
 //implementation of ERC721 where transers can be paused
-import "./../abstractions/ERC721Pausable.sol";
-//Abstract extension of ERC721MultiClass that allows a class to reference data (like a uri)
-import "./../abstractions/ERC721MultiClassData.sol";
-//Abstract extension of ERC721MultiClass that allows tokens to be listed and exchanged considering royalty fees
-import "./../abstractions/ERC721MultiClassExchange.sol";
-//Abstract extension of ERC721MultiClass that manages class sizes
-import "./../abstractions/ERC721MultiClassSize.sol";
+import "./../../ERC721/extensions/ERC721Pausable.sol";
+//Abstract extension of MultiClass that allows a class to reference data (like a uri)
+import "./../abstractions/MultiClassURIStorage.sol";
+//Abstract extension of MultiClass that allows tokens to be listed and exchanged considering royalty fees
+import "./../abstractions/MultiClassExchange.sol";
+//Abstract extension of MultiClass that manages class sizes
+import "./../abstractions/MultiClassSupply.sol";
 //For verifying messages in lazyMint
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-contract ERC721Marketplace is
+contract Marketplace is
   IERC2309,
   ERC721Burnable,
   ERC721Pausable,
-  ERC721MultiClassData,
-  ERC721MultiClassExchange,
-  ERC721MultiClassSize
+  MultiClassURIStorage,
+  MultiClassExchange,
+  MultiClassSupply
 {
   //in only the contract owner can add a fee
   address private _admin;
@@ -31,7 +31,7 @@ contract ERC721Marketplace is
   modifier onlyAdmin {
     require(
       _msgSender() == _admin,
-      "ERC721Marketplace: Restricted method access to only the admin"
+      "Marketplace: Restricted method access to only the admin"
     );
     _;
   }
@@ -66,7 +66,7 @@ contract ERC721Marketplace is
 
     for (uint256 i = 0; i < length; i++) {
       //check size
-      require(!classFilled(classIds[i]), "ERC721Marketplace: Class filled.");
+      require(!classFilled(classIds[i]), "Marketplace: Class filled.");
       //mint first and wait for errors
       _safeSilentMint(recipient, fromTokenId + i);
       //then classify it
@@ -90,7 +90,7 @@ contract ERC721Marketplace is
   ) external virtual onlyAdmin {
     require(
       fromTokenId < toTokenId, 
-      "ERC721Marketplace: Invalid token range."
+      "Marketplace: Invalid token range."
     );
 
     //check size
@@ -100,7 +100,7 @@ contract ERC721Marketplace is
 
     require(
       size == 0 || ((supply + length) <= size), 
-      "ERC721Marketplace: Class filled."
+      "Marketplace: Class filled."
     );
 
     for (uint256 tokenId = fromTokenId; tokenId <= fromTokenId; tokenId++) {
@@ -149,7 +149,7 @@ contract ERC721Marketplace is
     bytes calldata proof
   ) external virtual {
     //check size
-    require(!classFilled(classId), "ERC721Marketplace: Class filled.");
+    require(!classFilled(classId), "Marketplace: Class filled.");
     //make sure the admin signed this off
     require(
       ECDSA.recover(
@@ -160,7 +160,7 @@ contract ERC721Marketplace is
         ),
         proof
       ) == _admin,
-      "ERC721Marketplace: Invalid proof."
+      "Marketplace: Invalid proof."
     );
 
     //mint first and wait for errors
@@ -185,7 +185,7 @@ contract ERC721Marketplace is
     external virtual onlyAdmin
   {
     //check size
-    require(!classFilled(classId), "ERC721Marketplace: Class filled.");
+    require(!classFilled(classId), "Marketplace: Class filled.");
     //mint first and wait for errors
     _safeMint(recipient, tokenId);
     //then classify it
@@ -235,7 +235,7 @@ contract ERC721Marketplace is
 
     require(
       classId > 0, 
-      "ERC721Marketplace: Token is not apart of a multiclass"
+      "Marketplace: Token is not apart of a multiclass"
     ); 
     
     return classURI(classId);

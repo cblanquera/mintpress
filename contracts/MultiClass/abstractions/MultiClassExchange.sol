@@ -4,19 +4,19 @@ pragma solidity ^0.8.0;
 
 //contract user context (use this instead of msg.sender and msg.data)
 import "@openzeppelin/contracts/utils/Context.sol";
-//IERC721MultiClass interface
-import "./../interfaces/IERC721Exchange.sol";
+//IMultiClass interface
+import "./../../ERC721/interfaces/IERC721Exchange.sol";
 //implementation of ERC721 Non-Fungible Token Standard
-import "./../ERC721.sol";
-//abstraction of ERC721MultiClassFees
-import "./ERC721MultiClassFees.sol";
+import "./../../ERC721/ERC721.sol";
+//abstraction of MultiClassFees
+import "./MultiClassFees.sol";
 
 /**
- * @dev Abstract extension of ERC721MultiClass that allows tokens to be listed
+ * @dev Abstract extension of MultiClass that allows tokens to be listed
  * and exchanged considering royalty fees
  */
-abstract contract ERC721MultiClassExchange is
-  Context, ERC721, ERC721MultiClassFees, IERC721Exchange
+abstract contract MultiClassExchange is
+  Context, ERC721, MultiClassFees, IERC721Exchange
 {
   // mapping of `tokenId` to amount
   // amount defaults to 0 and is in wei
@@ -40,13 +40,13 @@ abstract contract ERC721MultiClassExchange is
     // even the contract owner cannot list a token
     require(
       ownerOf(tokenId) == _msgSender(),
-      "ERC721MultiClassExchange: Only the token owner can list a token"
+      "MultiClassExchange: Only the token owner can list a token"
     );
     //disallow free listings because solidity defaults amounts to zero
     //so it's impractical to determine a free listing from an unlisted one
     require(
       amount > 0,
-      "ERC721MultiClassExchange: Listing amount should be more than 0"
+      "MultiClassExchange: Listing amount should be more than 0"
     );
     //add the listing
     _book[tokenId] = amount;
@@ -63,13 +63,13 @@ abstract contract ERC721MultiClassExchange is
     // even the contract owner cannot delist a token
     require(
       owner == _msgSender(),
-      "ERC721MultiClassExchange: Only the token owner can delist a token"
+      "MultiClassExchange: Only the token owner can delist a token"
     );
     //this is for the benefit of the sender so they
     //dont have to pay gas on things that dont matter
     require(
       _book[tokenId] != 0,
-      "ERC721MultiClassExchange: Token is not listed"
+      "MultiClassExchange: Token is not listed"
     );
     //remove the listing
     delete _book[tokenId];
@@ -84,11 +84,11 @@ abstract contract ERC721MultiClassExchange is
     //get listing
     uint256 listing = listingOf(tokenId);
     //should be a valid listing
-    require(listing > 0, "ERC721MultiClassExchange: Token is not listed");
+    require(listing > 0, "MultiClassExchange: Token is not listed");
     //value should equal the listing amount
     require(
       msg.value == listing,
-      "ERC721MultiClassExchange: Amount sent does not match the listing amount"
+      "MultiClassExchange: Amount sent does not match the listing amount"
     );
 
     //payout the fees

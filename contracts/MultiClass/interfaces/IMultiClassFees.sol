@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-//IERC721MultiClass interface
-import "./IERC721MultiClass.sol";
+//IMultiClass interface
+import "./IMultiClass.sol";
 
 /**
- * @dev Required interface of an IERC721MultiClass compliant contract.
+ * @dev Required interface of an MultiClassFees compliant contract.
  */
-interface IERC721MultiClassFees is IERC721MultiClass {
+interface IMultiClassFees is IMultiClass {
   /**
    * @dev Returns the fee of a `recipient` in `classId`
    */

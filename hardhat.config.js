@@ -39,6 +39,11 @@ module.exports = {
       accounts: [process.env.MUMBAI_PRIVATE_KEY],
       contracts: [process.env.MUMBAI_CONTRACT_ADDRESS]
     },
+    prebsc: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      accounts: [process.env.PREBSC_PRIVATE_KEY],
+      contracts: [process.env.PREBSC_CONTRACT_ADDRESS]
+    },
     ropsten: {
       url: "https://eth-ropsten.alchemyapi.io/v2/YoNVLItXnYnhbJkzY9PMEAyOYn5dDGpn",
       accounts: [process.env.ROPSTEN_PRIVATE_KEY],

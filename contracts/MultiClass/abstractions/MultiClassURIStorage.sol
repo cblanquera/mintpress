@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.0;
 
-//IERC721MultiClassData interface
-import "./../interfaces/IERC721MultiClassData.sol";
+//MultiClassURIStorage interface
+import "./../interfaces/IMultiClassURIStorage.sol";
 
 /**
- * @dev Abstract extension of ERC721MultiClass that allows a
+ * @dev Abstract extension of MultiClass that allows a
  * class to reference data (like a uri)
  */
-abstract contract ERC721MultiClassData is IERC721MultiClassData {
+abstract contract MultiClassURIStorage is IMultiClassURIStorage {
   //mapping of `classId` to `data`
   mapping(uint256 => string) private _classURIs;
 
@@ -30,7 +30,7 @@ abstract contract ERC721MultiClassData is IERC721MultiClassData {
   {
     require(
       bytes(_classURIs[classId]).length == 0,
-      "ERC721MultiClass: Class is already referenced"
+      "MultiClass: Class is already referenced"
     );
     _classURIs[classId] = data;
   }
