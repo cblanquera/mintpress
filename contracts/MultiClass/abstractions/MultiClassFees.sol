@@ -6,6 +6,8 @@ pragma solidity ^0.8.0;
 import "./../interfaces/IMultiClassFees.sol";
 //abstraction of MultiClass
 import "./MultiClass.sol";
+//import Royalty part library
+import "./../../Rarible/LibPart.sol";
 
 /**
  * @dev Abstract extension of MultiClass that attaches royalty fees
@@ -16,11 +18,11 @@ abstract contract MultiClassFees is
   //10000 means 100.00%
   uint256 private constant TOTAL_ALLOWABLE_FEES = 10000;
   //mapping of `classId` to total fees (could be problematic if not synced)
-  mapping(uint256 => uint256) private _fees;
+  mapping(uint256 => uint96) private _fees;
   //mapping of `classId` to `recipient` fee
-  mapping(uint256 => mapping(address => uint256)) private _fee;
+  mapping(uint256 => mapping(address => uint96)) internal _fee;
   //index mapping of `classId` to recipients (so we can loop the map)
-  mapping(uint256 => address[]) private _recipients;
+  mapping(uint256 => address[]) internal _recipients;
 
   /**
    * @dev Returns the fee of a `recipient` in `classId`
@@ -41,7 +43,7 @@ abstract contract MultiClassFees is
   /**
    * @dev Sets a fee that will be collected during the exchange method
    */
-  function _allocateFee(uint256 classId, address recipient, uint256 fee)
+  function _allocateFee(uint256 classId, address recipient, uint96 fee)
     internal virtual
   {
     require(

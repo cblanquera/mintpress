@@ -19,9 +19,9 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 //For verifying messages in lazyMint
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./Rarible/impl/RoyaltiesV2Impl.sol";
 import "./Rarible/LibPart.sol";
 import "./Rarible/LibRoyaltiesV2.sol";
+import "./Rarible/RoyaltiesV2.sol";
 
 contract Mintpress is
   IERC2309,
@@ -30,7 +30,7 @@ contract Mintpress is
   MultiClassURIStorage,
   MultiClassExchange,
   MultiClassSupply,
-  RoyaltiesV2Impl,
+  RoyaltiesV2,
   Ownable
 {
   /**
@@ -42,7 +42,7 @@ contract Mintpress is
   /**
    * @dev Sets a fee that will be collected during the exchange method
    */
-  function allocate(uint256 classId, address recipient, uint256 fee)
+  function allocate(uint256 classId, address recipient, uint96 fee)
     external virtual onlyOwner
   {
     _allocateFee(classId, recipient, fee);
@@ -133,6 +133,21 @@ contract Mintpress is
     _exchange(tokenId, msg.value);
   }
 
+  function getRaribleV2Royalties(uint256 tokenId) override external view returns (LibPart.Part[] memory) {
+    uint256 classId = classOf(tokenId);
+    uint256 size = _recipients[classId].length;
+    LibPart.Part[] memory royalties;
+    for (uint i = 0; i < size; i++) {
+      LibPart.Part memory royalty;
+      address recipient = _recipients[classId][i];
+      royalty.account = payable(recipient);
+      royalty.value = _fee[classId][recipient];
+      royalties[i] = royalty;
+    }
+
+    return royalties;
+  }
+
   /**
    * @dev Allows anyone to self mint a token
    */
@@ -212,6 +227,19 @@ contract Mintpress is
     if (size > 0) {
       _fixClassSize(classId, size);
     }
+  }
+
+  /**
+   * @dev Rarible support interface
+   */
+  function supportsInterface(bytes4 interfaceId) 
+    public view virtual override(ERC721, IERC165) returns(bool)
+  {
+    if (interfaceId == LibRoyaltiesV2._INTERFACE_ID_ROYALTIES) {
+      return true;
+    }
+
+    return super.supportsInterface(interfaceId);
   }
 
   /**
