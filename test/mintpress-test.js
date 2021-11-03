@@ -1,8 +1,5 @@
 const { expect } = require('chai');
-const { loadEnvConfig } = require('@next/env');
-
-const projectDir = process.cwd();
-loadEnvConfig(projectDir);
+require('dotenv').config()
 
 if (process.env.NETWORK != 'hardhat') {
   console.error('Exited testing with network:', process.env.NETWORK)
