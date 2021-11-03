@@ -1,6 +1,8 @@
 # Mintpress
 
-ERC721 NFT for everywhere.
+ERC721 NFT for everything. Compatible is Rarible, Mintable, OpenSea. 
+Can be deployed onto any Ethreum Layer 2 including Polygon and Binance 
+Smart Chain.
 
 ## 1. Install
 
