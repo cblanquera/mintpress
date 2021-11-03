@@ -1,5 +1,4 @@
 const { expect } = require('chai');
-const keccak256 = require('keccak256');
 const { loadEnvConfig } = require('@next/env');
 
 const projectDir = process.cwd();
@@ -36,12 +35,12 @@ function hashToken(classId, tokenId, recipient) {
   )
 }
 
-describe('ERC721Marketplace Tests', function () {
+describe('Mintpress Tests', function () {
   it('Should register class and setup fees, mint/list/delist and buy token', async function () {
     const [contractOwner, creator, manager, tokenOwner, buyer] = await getSigners(
-      'ERC721Marketplace',
-      'GRYPH Street Art',
-      'GRYPH'
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
     )
 
     //----------------------------------------//
@@ -182,9 +181,9 @@ describe('ERC721Marketplace Tests', function () {
 
   it('Should stress lazy minting', async function () {
     const [contractOwner, tokenOwner] = await getSigners(
-      'ERC721Marketplace',
-      'GRYPH Street Art',
-      'GRYPH'
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
     )
 
     //----------------------------------------//
@@ -259,7 +258,7 @@ describe('ERC721Marketplace Tests', function () {
         contractOwner.address,
         signatures[1]
       )
-    ).to.be.revertedWith('ERC721Marketplace: Invalid proof.')
+    ).to.be.revertedWith('Mintpress: Invalid proof.')
 
     //let the contract owner redeem a token an unclaimed token for themself using a valid signature
     expect(
@@ -269,14 +268,14 @@ describe('ERC721Marketplace Tests', function () {
         contractOwner.address,
         signatures[2]
       )
-    ).to.be.revertedWith('ERC721Marketplace: Invalid proof.')
+    ).to.be.revertedWith('Mintpress: Invalid proof.')
   })
 
   it('Should stress minting', async function () {
     const [contractOwner, tokenOwner] = await getSigners(
-      'ERC721Marketplace',
-      'GRYPH Street Art',
-      'GRYPH'
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
     )
 
     //----------------------------------------//
@@ -302,7 +301,7 @@ describe('ERC721Marketplace Tests', function () {
     //try to register a class again
     expect(
       contractOwner.withContract.register(classId, classSize, classURI)
-    ).to.be.revertedWith('ERC721MultiClass: Class is already referenced')
+    ).to.be.revertedWith('MultiClass: Class is already referenced')
 
     //try to mint the same token again
     expect(
@@ -315,14 +314,14 @@ describe('ERC721Marketplace Tests', function () {
     //try to mint again
     expect(
       contractOwner.withContract.mint(classId, 3, tokenOwner.address)
-    ).to.be.revertedWith('ERC721Marketplace: Class filled.')
+    ).to.be.revertedWith('Mintpress: Class filled.')
   })
 
   it('Should stress fees', async function () {
     const [owner, creator, manager] = await getSigners(
-      'ERC721Marketplace',
-      'GRYPH Street Art',
-      'GRYPH'
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
     )
 
     //----------------------------------------//
@@ -355,11 +354,11 @@ describe('ERC721Marketplace Tests', function () {
     //try to under allocate
     expect(
       owner.withContract.allocate(classId, manager.address, 0)
-    ).to.be.revertedWith('ERC721MultiClassFees: Fee should be more than 0')
+    ).to.be.revertedWith('MultiClassFees: Fee should be more than 0')
     //try to over allocate
     expect(
       owner.withContract.allocate(classId, manager.address, 10000)
-    ).to.be.revertedWith('ERC721MultiClassFees: Exceeds allowable fees')
+    ).to.be.revertedWith('MultiClassFees: Exceeds allowable fees')
 
     //manager now wants fee from 10% to 30%
     await owner.withContract.allocate(classId, manager.address, 3000)
@@ -375,14 +374,14 @@ describe('ERC721Marketplace Tests', function () {
     //remove fee of someone that hasn't been entered
     expect(
       owner.withContract.deallocate(classId, owner.address)
-    ).to.be.revertedWith('ERC721MultiClassFees: Recipient has no fees')
+    ).to.be.revertedWith('MultiClassFees: Recipient has no fees')
   })
 
   it('Should stress exchange', async function () {
     const [contractOwner, tokenOwner, buyer] = await getSigners(
-      'ERC721Marketplace',
-      'GRYPH Street Art',
-      'GRYPH'
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
     )
 
     //----------------------------------------//
@@ -453,16 +452,16 @@ describe('ERC721Marketplace Tests', function () {
     //let the buyer try to delist
     expect(
       buyer.withContract.delist(tokenId)
-    ).to.be.revertedWith('ERC721MultiClassExchange: Token is not listed')
+    ).to.be.revertedWith('MultiClassExchange: Token is not listed')
 
     //let the owner try to list the token for sale
     expect(
       contractOwner.withContract.list(tokenId, listedAmount)
-    ).to.be.revertedWith('ERC721MultiClassExchange: Only the token owner can list a token')
+    ).to.be.revertedWith('MultiClassExchange: Only the token owner can list a token')
     //let the buyer try to list the token for sale
     expect(
       buyer.withContract.list(tokenId, 0)
-    ).to.be.revertedWith('ERC721MultiClassExchange: Listing amount should be more than 0')
+    ).to.be.revertedWith('MultiClassExchange: Listing amount should be more than 0')
 
     //the buyer should now properly list it
     await buyer.withContract.list(tokenId, listedAmount)
@@ -470,7 +469,7 @@ describe('ERC721Marketplace Tests', function () {
     //let the owner try to delist the token
     expect(
       contractOwner.withContract.delist(tokenId)
-    ).to.be.revertedWith('ERC721MultiClassExchange: Only the token owner can delist a token')
+    ).to.be.revertedWith('MultiClassExchange: Only the token owner can delist a token')
     //the buyer should now properly delist it
     await buyer.withContract.delist(tokenId)
     expect(await contractOwner.withContract.listingOf(tokenId)).to.equal(0)
@@ -480,7 +479,7 @@ describe('ERC721Marketplace Tests', function () {
     //let the old token owner try to buy it for the right amount
     expect(
       tokenOwner.withContract.exchange(tokenId, { value: listedAmount })
-    ).to.be.revertedWith('ERC721MultiClassExchange: Token is not listed')
+    ).to.be.revertedWith('MultiClassExchange: Token is not listed')
 
     //list it again so we can try to exchange it
     await buyer.withContract.list(tokenId, listedAmount)
@@ -489,20 +488,20 @@ describe('ERC721Marketplace Tests', function () {
       buyer.withContract.exchange(tokenId, {
         value: ethers.utils.parseEther('1.0')
       })
-    ).to.be.revertedWith('ERC721MultiClassExchange: Amount sent does not match the listing amount')
+    ).to.be.revertedWith('MultiClassExchange: Amount sent does not match the listing amount')
     //let the old token owner buy it for the right amount
     tokenOwner.withContract.exchange(tokenId, { value: listedAmount })
     //let the old token owner try to buy it for the right amount again
     expect(
       tokenOwner.withContract.exchange(tokenId, { value: listedAmount })
-    ).to.be.revertedWith('ERC721MultiClassExchange: Token is not listed')
+    ).to.be.revertedWith('MultiClassExchange: Token is not listed')
   })
 
   it('Should stress batch mint', async function () {
-    const [contractOwner, tokenOwner, buyer] = await getSigners(
-      'ERC721Marketplace',
-      'GRYPH Street Art',
-      'GRYPH'
+    const [contractOwner, tokenOwner] = await getSigners(
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
     )
 
     //----------------------------------------//
@@ -563,10 +562,10 @@ describe('ERC721Marketplace Tests', function () {
         fromTokenId + 5, 
         tokenOwner.address
       )
-    ).to.be.revertedWith('ERC721Marketplace: Class filled.')
+    ).to.be.revertedWith('Mintpress: Class filled.')
 
     const classIds = [];
-    for (let i = 0; i < 610; i++) {
+    for (let i = 0; i < 100; i++) {
       classIds.push(3)
     }
 
@@ -582,5 +581,135 @@ describe('ERC721Marketplace Tests', function () {
       500000, 
       tokenOwner.address
     )
+  })
+
+  it('Should support BEP721', async function () {
+    const [contractOwner, tokenOwner] = await getSigners(
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
+    )
+
+    //----------------------------------------//
+    // This is the class setup
+    const classId = 100
+    const classSize = 3
+    const classURI = 'ipfs://abc123'
+    await contractOwner.withContract.register(classId, classSize, classURI)
+    expect(await contractOwner.withContract.classURI(classId)).to.equal(classURI)
+
+    //----------------------------------------//
+    // This is the minting
+    const tokenId = 200
+    //fast forward ... (go straight to the token owner)
+    await contractOwner.withContract.mint(classId, tokenId, tokenOwner.address)
+    expect(await contractOwner.withContract.ownerOf(tokenId)).to.equal(tokenOwner.address)
+    expect(await contractOwner.withContract.classOf(tokenId)).to.equal(classId)
+    expect(await contractOwner.withContract.tokenURI(tokenId)).to.equal(classURI)
+
+    //----------------------------------------//
+    // This is the test
+    expect(await contractOwner.withContract.name()).to.equal('Mintpress Collection')
+    expect(await contractOwner.withContract.symbol()).to.equal('MPC')
+    expect(await contractOwner.withContract.totalSupply()).to.equal(1)
+    expect(await contractOwner.withContract.balanceOf(tokenOwner.address)).to.equal(1)
+  })
+
+  it('Should support ERC2981', async function () {
+    const [contractOwner, creator, manager, tokenOwner] = await getSigners(
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
+    )
+
+    //----------------------------------------//
+    // This is the class setup
+    const classId = 100
+    const classSize = 3
+    const classURI = 'ipfs://abc123'
+    await contractOwner.withContract.register(classId, classSize, classURI)
+    expect(await contractOwner.withContract.classURI(classId)).to.equal(classURI)
+
+    //----------------------------------------//
+    // This is the fee setup
+    //The creator wants 20% (2000 is 20.00%)
+    await contractOwner.withContract.allocate(classId, creator.address, 2000)
+    expect(
+      await contractOwner.withContract.classFeeOf(classId, creator.address)
+    ).to.equal(2000)
+
+    //The manager wants 10% (1000 is 10.00%)
+    await contractOwner.withContract.allocate(classId, manager.address, 1000)
+    expect(
+      await contractOwner.withContract.classFeeOf(classId, manager.address)
+    ).to.equal(1000)
+
+    //total fees should now be 30.00%
+    expect(await contractOwner.withContract.classFees(classId)).to.equal(3000)
+
+    //----------------------------------------//
+    // This is the minting
+    const tokenId = 200
+    //fast forward ... (go straight to the token owner)
+    await contractOwner.withContract.mint(classId, tokenId, tokenOwner.address)
+    expect(await contractOwner.withContract.ownerOf(tokenId)).to.equal(tokenOwner.address)
+    expect(await contractOwner.withContract.classOf(tokenId)).to.equal(classId)
+    expect(await contractOwner.withContract.tokenURI(tokenId)).to.equal(classURI)
+
+    //----------------------------------------//
+    // This is the test
+    const royalty = await contractOwner.withContract.royaltyInfo(tokenId, 10)
+    expect(parseFloat(royalty.royaltyAmount)).to.equal(2)
+    expect(royalty.receiver).to.equal(creator.address)
+  })
+
+  it('Should support Rarible', async function () {
+    const [contractOwner, creator, manager, tokenOwner] = await getSigners(
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC'
+    )
+
+    //----------------------------------------//
+    // This is the class setup
+    const classId = 100
+    const classSize = 3
+    const classURI = 'ipfs://abc123'
+    await contractOwner.withContract.register(classId, classSize, classURI)
+    expect(await contractOwner.withContract.classURI(classId)).to.equal(classURI)
+
+    //----------------------------------------//
+    // This is the fee setup
+    //The creator wants 20% (2000 is 20.00%)
+    await contractOwner.withContract.allocate(classId, creator.address, 2000)
+    expect(
+      await contractOwner.withContract.classFeeOf(classId, creator.address)
+    ).to.equal(2000)
+
+    //The manager wants 10% (1000 is 10.00%)
+    await contractOwner.withContract.allocate(classId, manager.address, 1000)
+    expect(
+      await contractOwner.withContract.classFeeOf(classId, manager.address)
+    ).to.equal(1000)
+
+    //total fees should now be 30.00%
+    expect(await contractOwner.withContract.classFees(classId)).to.equal(3000)
+
+    //----------------------------------------//
+    // This is the minting
+    const tokenId = 200
+    //fast forward ... (go straight to the token owner)
+    await contractOwner.withContract.mint(classId, tokenId, tokenOwner.address)
+    expect(await contractOwner.withContract.ownerOf(tokenId)).to.equal(tokenOwner.address)
+    expect(await contractOwner.withContract.classOf(tokenId)).to.equal(classId)
+    expect(await contractOwner.withContract.tokenURI(tokenId)).to.equal(classURI)
+
+    //----------------------------------------//
+    // This is the test
+    const royalties = await contractOwner.withContract.getRaribleV2Royalties(tokenId)
+    expect(royalties[0].value).to.equal(2000)
+    expect(royalties[0].account).to.equal(creator.address)
+    expect(royalties[1].value).to.equal(1000)
+    expect(royalties[1].account).to.equal(manager.address)
   })
 })

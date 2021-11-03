@@ -26,6 +26,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
   // Token symbol
   string private _symbol;
 
+  //for total supply
+  uint256 private _supply = 0;
+
   // Mapping from token ID to owner address
   mapping(uint256 => address) private _owners;
 
@@ -95,6 +98,13 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 
     string memory baseURI = _baseURI();
     return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+  }
+
+  /**
+   * @dev Shows the overall amount of tokens generated
+   */
+  function totalSupply() public virtual view returns (uint256) {
+    return _supply;
   }
 
   /**
@@ -331,6 +341,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 
     _balances[to] += 1;
     _owners[tokenId] = to;
+    _supply += 1;
   }
 
   /**

@@ -20,11 +20,6 @@ interface IBEP721 is IERC721 {
   function symbol() external view returns (string memory);
 
   /**
-   * @dev Displays the token balance of a given address 
-   */
-  function balanceOf(address owner) external view returns (uint256);
-
-  /**
    * @dev Shows the overall amount of tokens generated
    */
   function totalSupply() external view returns (uint256);

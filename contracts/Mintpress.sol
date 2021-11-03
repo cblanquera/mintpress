@@ -2,6 +2,13 @@
 
 pragma solidity ^0.8.0;
 
+//For verifying messages in lazyMint
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+//For verifying messages in lazyMint
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+//IERC2981 interface
+import "./BEP721/IBEP721.sol";
 //IERC2981 interface
 import "./ERC2981/IERC2981.sol";
 //IERC2309 interface
@@ -16,16 +23,13 @@ import "./MultiClass/abstractions/MultiClassURIStorage.sol";
 import "./MultiClass/abstractions/MultiClassExchange.sol";
 //Abstract extension of MultiClass that manages class sizes
 import "./MultiClass/abstractions/MultiClassSupply.sol";
-//For verifying messages in lazyMint
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-//For verifying messages in lazyMint
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./Rarible/LibPart.sol";
 import "./Rarible/LibRoyaltiesV2.sol";
 import "./Rarible/RoyaltiesV2.sol";
 
 contract Mintpress is
+  IBEP721,
   IERC2981,
   IERC2309,
   ERC721Burnable,
@@ -40,7 +44,8 @@ contract Mintpress is
    * @dev Constructor function
    */
   constructor (string memory _name, string memory _symbol)
-    ERC721(_name, _symbol) {}
+    ERC721(_name, _symbol) 
+  {}
 
   /**
    * @dev Sets a fee that will be collected during the exchange method
@@ -63,7 +68,7 @@ contract Mintpress is
 
     for (uint256 i = 0; i < length; i++) {
       //check size
-      require(!classFilled(classIds[i]), "Marketplace: Class filled.");
+      require(!classFilled(classIds[i]), "Mintpress: Class filled.");
       //mint first and wait for errors
       _safeSilentMint(recipient, fromTokenId + i);
       //then classify it
@@ -87,7 +92,7 @@ contract Mintpress is
   ) external virtual onlyOwner {
     require(
       fromTokenId < toTokenId, 
-      "Marketplace: Invalid token range."
+      "Mintpress: Invalid token range."
     );
 
     //check size
@@ -97,7 +102,7 @@ contract Mintpress is
 
     require(
       size == 0 || ((supply + length) <= size), 
-      "Marketplace: Class filled."
+      "Mintpress: Class filled."
     );
 
     for (uint256 tokenId = fromTokenId; tokenId <= fromTokenId; tokenId++) {
@@ -142,13 +147,14 @@ contract Mintpress is
   function getRaribleV2Royalties(uint256 tokenId) override external view returns (LibPart.Part[] memory) {
     uint256 classId = classOf(tokenId);
     uint256 size = _recipients[classId].length;
-    LibPart.Part[] memory royalties;
+    //this is how to set the size of an array in memory
+    LibPart.Part[] memory royalties = new LibPart.Part[](size);
     for (uint i = 0; i < size; i++) {
-      LibPart.Part memory royalty;
       address recipient = _recipients[classId][i];
-      royalty.account = payable(recipient);
-      royalty.value = _fee[classId][recipient];
-      royalties[i] = royalty;
+      royalties[i] = LibPart.Part(
+        payable(recipient), 
+        _fee[classId][recipient]
+      );
     }
 
     return royalties;
@@ -164,7 +170,7 @@ contract Mintpress is
     bytes calldata proof
   ) external virtual {
     //check size
-    require(!classFilled(classId), "Marketplace: Class filled.");
+    require(!classFilled(classId), "Mintpress: Class filled.");
     //make sure the admin signed this off
     require(
       ECDSA.recover(
@@ -175,7 +181,7 @@ contract Mintpress is
         ),
         proof
       ) == owner(),
-      "Marketplace: Invalid proof."
+      "Mintpress: Invalid proof."
     );
 
     //mint first and wait for errors
@@ -200,13 +206,22 @@ contract Mintpress is
     external virtual onlyOwner
   {
     //check size
-    require(!classFilled(classId), "Marketplace: Class filled.");
+    require(!classFilled(classId), "Mintpress: Class filled.");
     //mint first and wait for errors
     _safeMint(recipient, tokenId);
     //then classify it
     _classify(tokenId, classId);
     //then increment supply
     _addClassSupply(classId, 1);
+  }
+
+  /**
+   * @dev Specifies the name by which other contracts will recognize the BEP-721 token 
+   */
+  function name() 
+    public view override(ERC721, IBEP721) returns(string memory) 
+  {
+    return super.name();
   }
 
   /**
@@ -271,6 +286,15 @@ contract Mintpress is
   }
 
   /**
+   * @dev A concise name for the token, comparable to a ticker symbol 
+   */
+  function symbol() 
+    public view override(ERC721, IBEP721) returns (string memory) 
+  {
+    return super.symbol();
+  }
+
+  /**
    * @dev Resolves duplicate tokenURI method definition
    * between ERC721 and ERC721URIStorage
    */
@@ -285,10 +309,19 @@ contract Mintpress is
 
     require(
       classId > 0, 
-      "Marketplace: Token is not apart of a multiclass"
+      "Mintpress: Token is not apart of a multiclass"
     ); 
     
     return classURI(classId);
+  }
+
+  /**
+   * @dev Shows the overall amount of tokens generated
+   */
+  function totalSupply() 
+    public view override(ERC721, IBEP721) returns(uint256) 
+  {
+    return super.totalSupply();
   }
 
   /**
