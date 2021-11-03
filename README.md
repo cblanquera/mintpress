@@ -341,7 +341,7 @@ await nft.classOf(200) //--> 100
 
 Returns the data of `classId`
 
-`referenceOf(uint256 classId)`
+`classURI(uint256 classId)`
 
 ```js
 await nft.referenceOf(100) //--> ipfs://abc123
