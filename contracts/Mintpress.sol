@@ -239,6 +239,18 @@ contract Mintpress is
   /**
    * @dev Resolves duplicate tokenURI method definition
    * between ERC721 and ERC721URIStorage
+   * Example Format:
+   * {
+   *   "description": "Friendly OpenSea Creature that enjoys long swims in the ocean.", 
+   *   "external_url": "https://mywebsite.com/3", 
+   *   "image": "https://mywebsite.com/3.png", 
+   *   "name": "My NFT",
+   *   "attributes": {
+   *     "background_color": "#000000",
+   *     "animation_url": "",
+   *     "youtube_url": ""
+   *   } 
+   * }
    */
   function tokenURI(uint256 tokenId) 
     public 
