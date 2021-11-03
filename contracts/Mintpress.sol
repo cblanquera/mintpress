@@ -6,15 +6,17 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 //For verifying messages in lazyMint
 import "@openzeppelin/contracts/access/Ownable.sol";
-
-//IERC2981 interface
-import "./BEP721/IBEP721.sol";
-//IERC2981 interface
-import "./ERC2981/IERC2981.sol";
 //implementation of ERC721 where tokens can be irreversibly burned (destroyed).
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 //implementation of ERC721 where transers can be paused
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+
+//BEP721 interface
+import "./BEP721/IBEP721.sol";
+//ERC2981 interface
+import "./ERC2981/IERC2981.sol";
+//ERC721OpenSea interface
+import "./OpenSea/ERC721OpenSea.sol";
 //Abstract extension of MultiClass that allows a class to reference data (like a uri)
 import "./MultiClass/abstractions/MultiClassURIStorage.sol";
 //Abstract extension of MultiClass that allows tokens to be listed and exchanged considering royalty fees
@@ -29,6 +31,7 @@ import "./Rarible/RoyaltiesV2.sol";
 contract Mintpress is
   IBEP721,
   IERC2981,
+  ERC721OpenSea,
   ERC721Burnable,
   ERC721Pausable,
   MultiClassURIStorage,
@@ -43,8 +46,13 @@ contract Mintpress is
   /**
    * @dev Constructor function
    */
-  constructor (string memory _name, string memory _symbol)
+  constructor (
+    string memory _name, 
+    string memory _symbol, 
+    string memory _baseTokenURI, 
+    string memory _contractURI)
     ERC721(_name, _symbol) 
+    ERC721OpenSea(_baseTokenURI, _contractURI) 
   {}
 
   /**

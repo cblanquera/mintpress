@@ -2,17 +2,29 @@
 
 pragma solidity ^0.8.0;
 
-/**
- * @dev see: https://docs.opensea.io/docs/1-structuring-your-smart-contract
- *      see: https://github.com/ProjectOpenSea/opensea-creatures/blob/master/contracts/ERC721Tradable.sol#L70-L86
- */
-interface IERC721OpenSea {
+//ERC721OpenSea interface
+import "./IERC721OpenSea.sol";
+
+contract ERC721OpenSea is IERC721OpenSea {
+  string private _baseTokenURI;
+  string private _contractURI;
+
+  /**
+   * @dev Constructor function
+   */
+  constructor (string memory baseTokenURI_, string memory contractURI_) {
+    _contractURI = contractURI_;
+    _baseTokenURI = baseTokenURI_;
+  }
+
   /**
    * @dev The base URI for token data ex. https://creatures-api.opensea.io/api/creature/
    * Example Usage: 
    *  Strings.strConcat(baseTokenURI(), Strings.uint2str(tokenId))
    */
-  function baseTokenURI() external view returns (string memory);
+  function baseTokenURI() public view returns (string memory) {
+    return _baseTokenURI;
+  }
 
   /**
    * @dev The URI for contract data ex. https://creatures-api.opensea.io/contract/opensea-creatures
@@ -26,5 +38,7 @@ interface IERC721OpenSea {
    *   "fee_recipient": "0xA97F337c39cccE66adfeCB2BF99C1DdC54C2D721" # Where seller fees will be paid to.
    * }
    */
-  function contractURI() external view returns (string memory);
+  function contractURI() public view returns (string memory) {
+    return _contractURI;
+  }
 }

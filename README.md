@@ -156,9 +156,14 @@ contract.
 
 ```js
 //load the factory
-const NFT = await ethers.getContractFactory('ERC721Marketplace')
+const NFT = await ethers.getContractFactory('Mintpress')
 //deploy the contract
-const nft = await NFT.deploy('Your Project Title', 'DEMO')
+const nft = await NFT.deploy(
+  'Your Project Title', 
+  'DEMO', 
+  'http://myproject.com/contract.json', 
+  'http://myproject.com/token/'
+)
 //wait for it to be confirmed
 await nft.deployed()
 

@@ -16,7 +16,9 @@ describe('Contract Library', function() {
     const contract = await loadContract(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     expect(typeof contract.totalSupply).to.equal('function')

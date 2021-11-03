@@ -37,7 +37,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, creator, manager, tokenOwner, buyer] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -180,7 +182,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, tokenOwner] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -272,7 +276,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, tokenOwner] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -318,7 +324,9 @@ describe('Mintpress Tests', function () {
     const [owner, creator, manager] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -378,7 +386,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, tokenOwner, buyer] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -498,7 +508,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, tokenOwner] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -530,7 +542,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, creator, manager, tokenOwner] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
@@ -578,7 +592,9 @@ describe('Mintpress Tests', function () {
     const [contractOwner, creator, manager, tokenOwner] = await getSigners(
       'Mintpress',
       'Mintpress Collection',
-      'MPC'
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
     )
 
     //----------------------------------------//
