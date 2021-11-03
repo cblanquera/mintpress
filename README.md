@@ -228,7 +228,7 @@ Mints `tokenId`, classifies it as `classId` and transfers to `recipient`.
  - **recipient** - Wallet address to send the token to
 
 ```js
-await nft.mint(100, 200 '0xabc123') // 1000 is 10.00%
+await nft.mint(100, 200 '0xabc123')
 ```
 
 ##### Pause
