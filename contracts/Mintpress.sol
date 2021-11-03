@@ -11,12 +11,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./BEP721/IBEP721.sol";
 //IERC2981 interface
 import "./ERC2981/IERC2981.sol";
-//IERC2309 interface
-import "./ERC2309/IERC2309.sol";
 //implementation of ERC721 where tokens can be irreversibly burned (destroyed).
-import "./ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 //implementation of ERC721 where transers can be paused
-import "./ERC721/extensions/ERC721Pausable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 //Abstract extension of MultiClass that allows a class to reference data (like a uri)
 import "./MultiClass/abstractions/MultiClassURIStorage.sol";
 //Abstract extension of MultiClass that allows tokens to be listed and exchanged considering royalty fees
@@ -31,7 +29,6 @@ import "./Rarible/RoyaltiesV2.sol";
 contract Mintpress is
   IBEP721,
   IERC2981,
-  IERC2309,
   ERC721Burnable,
   ERC721Pausable,
   MultiClassURIStorage,
@@ -40,6 +37,9 @@ contract Mintpress is
   RoyaltiesV2,
   Ownable
 {
+  //for total supply
+  uint256 private _supply = 0;
+
   /**
    * @dev Constructor function
    */
@@ -54,68 +54,6 @@ contract Mintpress is
     external virtual onlyOwner
   {
     _allocateFee(classId, recipient, fee);
-  }
-
-  /**
-   * @dev Multiclass batch minting
-   */
-  function batchMint(
-    uint256[] memory classIds, 
-    uint256 fromTokenId,
-    address recipient
-  ) external virtual onlyOwner {
-    uint256 length = classIds.length;
-
-    for (uint256 i = 0; i < length; i++) {
-      //check size
-      require(!classFilled(classIds[i]), "Mintpress: Class filled.");
-      //mint first and wait for errors
-      _safeSilentMint(recipient, fromTokenId + i);
-      //then classify it
-      _classify(fromTokenId + i, classIds[i]);
-      //then increment supply
-      _addClassSupply(classIds[i], 1);
-    }
-
-    uint256 toTokenId = (fromTokenId + length) - 1;
-    emit ConsecutiveTransfer(fromTokenId, toTokenId, address(0), recipient);
-  }
-
-  /**
-   * @dev Multiclass batch minting
-   */
-  function batchClassMint(
-    uint256 classId, 
-    uint256 fromTokenId,
-    uint256 toTokenId,
-    address recipient
-  ) external virtual onlyOwner {
-    require(
-      fromTokenId < toTokenId, 
-      "Mintpress: Invalid token range."
-    );
-
-    //check size
-    uint256 length = (toTokenId - fromTokenId) + 1;
-    uint256 supply = classSupply(classId);
-    uint256 size = classSize(classId);
-
-    require(
-      size == 0 || ((supply + length) <= size), 
-      "Mintpress: Class filled."
-    );
-
-    for (uint256 tokenId = fromTokenId; tokenId <= fromTokenId; tokenId++) {
-      //mint first and wait for errors
-      _safeSilentMint(recipient, tokenId);
-      //then classify it
-      _classify(tokenId, classId);
-    }
-
-    //then increment supply
-    _addClassSupply(classId, length);
-
-    emit ConsecutiveTransfer(fromTokenId, toTokenId, address(0), recipient);
   }
 
   /**
@@ -190,6 +128,8 @@ contract Mintpress is
     _classify(tokenId, classId);
     //then increment supply
     _addClassSupply(classId, 1);
+    //add to supply
+    _supply += 1;
   }
 
   /**
@@ -213,6 +153,8 @@ contract Mintpress is
     _classify(tokenId, classId);
     //then increment supply
     _addClassSupply(classId, 1);
+    //add to supply
+    _supply += 1;
   }
 
   /**
@@ -318,10 +260,8 @@ contract Mintpress is
   /**
    * @dev Shows the overall amount of tokens generated
    */
-  function totalSupply() 
-    public view override(ERC721, IBEP721) returns(uint256) 
-  {
-    return super.totalSupply();
+  function totalSupply() public virtual view returns (uint256) {
+    return _supply;
   }
 
   /**

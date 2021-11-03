@@ -4,10 +4,11 @@ pragma solidity ^0.8.0;
 
 //contract user context (use this instead of msg.sender and msg.data)
 import "@openzeppelin/contracts/utils/Context.sol";
-//IMultiClass interface
-import "./../../ERC721/interfaces/IERC721Exchange.sol";
 //implementation of ERC721 Non-Fungible Token Standard
-import "./../../ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+
+//IMultiClass interface
+import "./../interfaces/IMultiClassExchange.sol";
 //abstraction of MultiClassFees
 import "./MultiClassFees.sol";
 
@@ -16,7 +17,7 @@ import "./MultiClassFees.sol";
  * and exchanged considering royalty fees
  */
 abstract contract MultiClassExchange is
-  Context, ERC721, MultiClassFees, IERC721Exchange
+  Context, ERC721, MultiClassFees, IMultiClassExchange
 {
   // mapping of `tokenId` to amount
   // amount defaults to 0 and is in wei

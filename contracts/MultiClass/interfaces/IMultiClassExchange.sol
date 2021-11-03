@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 /**
  * @dev Required interface of an IERC721Exchange compliant contract.
  */
-interface IERC721Exchange is IERC721 {
+interface IMultiClassExchange is IERC721 {
   /**
    * @dev Emitted when `owner` books their `tokenId` to
    * be sold for `amount` in wei.
