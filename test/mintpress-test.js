@@ -639,4 +639,53 @@ describe('Mintpress Tests', function () {
     expect(royalties[1].value).to.equal(1000)
     expect(royalties[1].account).to.equal(manager.address)
   })
+
+  it('Should mint pack', async function () {
+    const [contractOwner, creator, manager, tokenOwner] = await getSigners(
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
+    )
+
+    //----------------------------------------//
+    // This is the class setup
+    const classId1 = 100
+    const classSize1 = 3
+    const classURI1 = 'ipfs://abc123'
+
+    const classId2 = 200
+    const classSize2 = 0
+    const classURI2 = 'ipfs://def234'
+
+    const classId3 = 300
+    const classSize3 = 3
+    const classURI3 = 'ipfs://ghi345'
+
+    await contractOwner.withContract.register(classId1, classSize1, classURI1)
+    await contractOwner.withContract.register(classId2, classSize2, classURI2)
+    await contractOwner.withContract.register(classId3, classSize3, classURI3)
+
+    //----------------------------------------//
+    // This is the minting
+    const fromTokenId = 200
+    const tokensInPack = 10
+    const defaultSize = 4
+    //fast forward ... (go straight to the token owner)
+    await contractOwner.withContract.mintPack(
+      [classId1, classId2, classId3], 
+      fromTokenId, 
+      tokenOwner.address, 
+      tokensInPack, 
+      defaultSize, 
+      'client seed'
+    )
+
+    //----------------------------------------//
+    // This is the test
+    for(let i = 0; i < tokensInPack; i++) {
+      expect(await contractOwner.withContract.ownerOf(fromTokenId + i)).to.equal(tokenOwner.address)
+    }
+  })
 })

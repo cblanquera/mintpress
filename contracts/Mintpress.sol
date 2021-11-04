@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 //implementation of ERC721 where transers can be paused
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+import "hardhat/console.sol";
 
 //BEP721 interface
 import "./BEP721/IBEP721.sol";
@@ -27,6 +28,9 @@ import "./MultiClass/abstractions/MultiClassSupply.sol";
 import "./Rarible/LibPart.sol";
 import "./Rarible/LibRoyaltiesV2.sol";
 import "./Rarible/RoyaltiesV2.sol";
+
+import "./Secrets/ProvablyFair.sol";
+import "./Secrets/RandomPrize.sol";
 
 contract Mintpress is
   IBEP721,
@@ -151,7 +155,7 @@ contract Mintpress is
    * @dev Mints `tokenId`, classifies it as `classId` and transfers to `recipient`
    */
   function mint(uint256 classId, uint256 tokenId, address recipient)
-    external virtual onlyOwner
+    public virtual onlyOwner
   {
     //check size
     require(!classFilled(classId), "Mintpress: Class filled.");
@@ -163,6 +167,76 @@ contract Mintpress is
     _addClassSupply(classId, 1);
     //add to supply
     _supply += 1;
+  }
+
+  function mintPack(
+    uint256[] memory classIds, 
+    uint256 fromTokenId,
+    address recipient, 
+    uint8 tokensInPack,
+    uint256 defaultSize,
+    string memory seed
+  ) external virtual onlyOwner {
+    require(defaultSize > 0, "Mintpress: Missing default size");
+    uint256[] memory rollToPrizeMap = new uint256[](classIds.length);
+    uint256 size;
+    uint256 supply;
+    //loop through classIds
+    for (uint8 i = 0; i < classIds.length; i++) {
+      //get the class size
+      size = classSize(classIds[i]);
+      //if the class size is no limits
+      if (size == 0) {
+        //use the default size
+        size = defaultSize;
+      }
+      //get the supply
+      supply = classSupply(classIds[i]);
+      //if the supply is greater than the size
+      if (supply >= size) {
+        //then we should zero out the 
+        rollToPrizeMap[i] = 0;
+        continue;
+      }
+      //determine the roll range for this class
+      rollToPrizeMap[i] = size - supply;
+      //to make it really a range we need 
+      //to append the the last class range
+      if (i > 0) {
+        rollToPrizeMap[i] += rollToPrizeMap[i - 1];
+      }
+    }
+
+    //figure out the max roll value 
+    //(which should be the last value in the roll to prize map)
+    uint256 maxRollValue = rollToPrizeMap[rollToPrizeMap.length - 1];
+    //max roll value is also the total available tokens that can be minted
+    //if the tokens in pack is more than that, then we should error
+    require(
+      tokensInPack <= maxRollValue, 
+      "Mintpress: Not enough tokens to make a mint pack"
+    );
+
+    //now we can create a prize pool
+    RandomPrize.PrizePool memory pool = RandomPrize.PrizePool(
+      ProvablyFair.RollState(
+        maxRollValue, 0, 0, blockhash(block.number - 1)
+      ), 
+      classIds, 
+      rollToPrizeMap
+    );
+
+    uint256 classId;
+    // for each token in the pack
+    for (uint8 i = 0; i < tokensInPack; i++) {
+      //figure out what the winning class id is
+      classId = RandomPrize.roll(pool, seed, (i + 1) < tokensInPack);
+      //if there is a class id
+      if (classId > 0) {
+        //then lets mint it
+        mint(classId, fromTokenId + i, recipient);
+      }
+    }
   }
 
   /**
