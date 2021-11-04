@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 //implementation of ERC721 where transers can be paused
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
-import "hardhat/console.sol";
 
 //BEP721 interface
 import "./BEP721/IBEP721.sol";
