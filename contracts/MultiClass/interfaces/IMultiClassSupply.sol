@@ -2,13 +2,10 @@
 
 pragma solidity ^0.8.0;
 
-//IMultiClass interface
-import "./IMultiClass.sol";
-
 /**
  * @dev Required interface of an MultiClassSupply compliant contract.
  */
-interface IMultiClassSupply is IMultiClass {
+interface IMultiClassSupply {
   /**
    * @dev Returns the total possible supply size of `classId`
    */

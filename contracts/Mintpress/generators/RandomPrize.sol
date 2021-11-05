@@ -2,9 +2,16 @@
 
 pragma solidity ^0.8.0;
 
+//provably fair library used as the prize roller
 import "./ProvablyFair.sol";
 
+/**
+ * @dev Random prize roller 
+ */
 library RandomPrize {
+  /**
+   * @dev Pattern to manage prize pool and roll to prize map
+   */
   struct PrizePool {
     ProvablyFair.RollState state;
     uint256[] prizes;

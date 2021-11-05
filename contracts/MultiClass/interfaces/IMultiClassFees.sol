@@ -2,13 +2,10 @@
 
 pragma solidity ^0.8.0;
 
-//IMultiClass interface
-import "./IMultiClass.sol";
-
 /**
  * @dev Required interface of an MultiClassFees compliant contract.
  */
-interface IMultiClassFees is IMultiClass {
+interface IMultiClassFees {
   /**
    * @dev Returns the fee of a `recipient` in `classId`
    */

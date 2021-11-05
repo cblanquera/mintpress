@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-//IMultiClass interface
+//interface of a MultiClass compliant contract
 import "./../interfaces/IMultiClass.sol";
 
 /**
- * @dev Abstract of an ERC721 managing multiple classes of tokens
+ * @dev Abstract implementation of a multi class token factory
  */
 abstract contract MultiClass is IMultiClass {
   //mapping of token id to class
@@ -15,14 +15,18 @@ abstract contract MultiClass is IMultiClass {
   /**
    * @dev Returns the class given `tokenId`
    */
-  function classOf(uint256 tokenId) public view override returns(uint256) {
+  function classOf(uint256 tokenId) 
+    public view virtual returns(uint256) 
+  {
     return _tokens[tokenId];
   }
 
   /**
    * @dev Maps `tokenId` to `classId`
    */
-  function _classify(uint256 tokenId, uint256 classId) internal virtual {
+  function _classify(uint256 tokenId, uint256 classId) 
+    internal virtual 
+  {
     require(
       _tokens[tokenId] == 0,
       "MultiClass: Token is already classified"

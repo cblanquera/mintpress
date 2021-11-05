@@ -2,9 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-
+/**
+ * @dev Implementation of a provably fair library
+ */
 library ProvablyFair {
+  /**
+   * @dev Pattern to manage the roll settings
+   */
   struct RollState {
     uint256 max;
     uint256 min;
@@ -63,7 +67,9 @@ library ProvablyFair {
       state.seed = "";
     }
 
+    //if there is a max
     if (state.max > 0) {
+      //cap the results
       return results % state.max;  
     }
 

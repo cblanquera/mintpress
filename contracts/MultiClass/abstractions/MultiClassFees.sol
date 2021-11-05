@@ -2,19 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-//IMultiClass interface
+//interface of a MultiClassFees compliant contract
 import "./../interfaces/IMultiClassFees.sol";
-//abstraction of MultiClass
-import "./MultiClass.sol";
-//import Royalty part library
-import "./../../Rarible/LibPart.sol";
 
 /**
- * @dev Abstract extension of MultiClass that attaches royalty fees
+ * @dev Abstract that considers royalty fees in multi classes
  */
-abstract contract MultiClassFees is
-  MultiClass, IMultiClassFees
-{
+abstract contract MultiClassFees is IMultiClassFees {
   //10000 means 100.00%
   uint256 private constant TOTAL_ALLOWABLE_FEES = 10000;
   //mapping of `classId` to total fees (could be problematic if not synced)
@@ -25,10 +19,16 @@ abstract contract MultiClassFees is
   mapping(uint256 => address[]) internal _recipients;
 
   /**
+   * @dev Returns the class given `tokenId`
+   */
+  function classOf(uint256 tokenId) 
+    public view virtual returns(uint256);
+
+  /**
    * @dev Returns the fee of a `recipient` in `classId`
    */
   function classFeeOf(uint256 classId, address recipient)
-    public view override returns(uint256)
+    public view virtual returns(uint256)
   {
     return _fee[classId][recipient];
   }
@@ -36,7 +36,9 @@ abstract contract MultiClassFees is
   /**
    * @dev returns the total fees of `classId`
    */
-  function classFees(uint256 classId) public view override returns(uint256) {
+  function classFees(uint256 classId) 
+    public view virtual returns(uint256) 
+  {
     return _fees[classId];
   }
 

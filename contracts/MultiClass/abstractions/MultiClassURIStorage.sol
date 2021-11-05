@@ -2,12 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-//MultiClassURIStorage interface
+//interface of a MultiClassURIStorage compliant contract
 import "./../interfaces/IMultiClassURIStorage.sol";
 
 /**
- * @dev Abstract extension of MultiClass that allows a
- * class to reference data (like a uri)
+ * @dev Abstract implementation of attaching URIs in token classes
  */
 abstract contract MultiClassURIStorage is IMultiClassURIStorage {
   //mapping of `classId` to `data`
@@ -17,7 +16,7 @@ abstract contract MultiClassURIStorage is IMultiClassURIStorage {
    * @dev Returns the reference of `classId`
    */
   function classURI(uint256 classId)
-    public view returns(string memory)
+    public view virtual returns(string memory)
   {
     return _classURIs[classId];
   }

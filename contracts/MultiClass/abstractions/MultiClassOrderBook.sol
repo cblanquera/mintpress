@@ -2,23 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-//contract user context (use this instead of msg.sender and msg.data)
-import "@openzeppelin/contracts/utils/Context.sol";
-//implementation of ERC721 Non-Fungible Token Standard
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-
-//IMultiClass interface
-import "./../interfaces/IMultiClassExchange.sol";
-//abstraction of MultiClassFees
-import "./MultiClassFees.sol";
+//interface of a MultiClassOrderBook compliant contract
+import "./../interfaces/IMultiClassOrderBook.sol";
 
 /**
- * @dev Abstract extension of MultiClass that allows tokens to be listed
- * and exchanged considering royalty fees
+ * @dev Abstract that allows tokens to be listed in an order book
  */
-abstract contract MultiClassExchange is
-  Context, ERC721, MultiClassFees, IMultiClassExchange
-{
+abstract contract MultiClassOrderBook is IMultiClassOrderBook {
   // mapping of `tokenId` to amount
   // amount defaults to 0 and is in wei
   // apparently the data type for ether units is uint256 so we can interact
@@ -27,16 +17,30 @@ abstract contract MultiClassExchange is
   mapping (uint256 => uint256) private _book;
 
   /**
+   * @dev abstract; defined in ERC721; See {IERC721-ownerOf}.
+   */
+  function ownerOf(uint256 tokenId) 
+    public view virtual returns (address);
+
+  /**
+   * @dev abstract; defined in Context; Returns the caller of 
+   *      a contract method
+   */
+  function _msgSender() internal view virtual returns (address);
+
+  /**
    * @dev Returns the amount a `tokenId` is being offered for.
    */
-  function listingOf(uint256 tokenId) public view override returns(uint256) {
+  function listingOf(uint256 tokenId) 
+    public view virtual returns(uint256) 
+  {
     return _book[tokenId];
   }
 
   /**
    * @dev Lists `tokenId` on the order book for `amount` in wei.
    */
-  function _list(uint256 tokenId, uint256 amount) internal {
+  function _list(uint256 tokenId, uint256 amount) internal virtual {
     //error if the sender is not the owner
     // even the contract owner cannot list a token
     require(
@@ -58,7 +62,7 @@ abstract contract MultiClassExchange is
   /**
    * @dev Removes `tokenId` from the order book.
    */
-  function _delist(uint256 tokenId) internal {
+  function _delist(uint256 tokenId) internal virtual {
     address owner = ownerOf(tokenId);
     //error if the sender is not the owner
     // even the contract owner cannot delist a token
@@ -76,31 +80,5 @@ abstract contract MultiClassExchange is
     delete _book[tokenId];
     //emit that something was delisted
     emit Delisted(owner, tokenId);
-  }
-
-  /**
-   * @dev Allows for a sender to exchange `tokenId` for the listed `amount`
-   */
-  function _exchange(uint256 tokenId, uint256 amount) internal virtual {
-    //get listing
-    uint256 listing = listingOf(tokenId);
-    //should be a valid listing
-    require(listing > 0, "MultiClassExchange: Token is not listed");
-    //value should equal the listing amount
-    require(
-      msg.value == listing,
-      "MultiClassExchange: Amount sent does not match the listing amount"
-    );
-
-    //payout the fees
-    uint256 remainder = _escrowFees(tokenId, amount);
-    //get the token owner
-    address payable tokenOwner = payable(ownerOf(tokenId));
-    //send the remainder to the token owner
-    tokenOwner.transfer(remainder);
-    //transfer token from owner to buyer
-    _transfer(tokenOwner, _msgSender(), tokenId);
-    //now that the sender owns it, delist it
-    _delist(tokenId);
   }
 }

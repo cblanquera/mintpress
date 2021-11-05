@@ -2,10 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-//ERC721OpenSea interface
-import "./IERC721OpenSea.sol";
+//interface of a OpenSea compliant contract
+import "./interfaces/IERC721OpenSea.sol";
 
-contract ERC721OpenSea is IERC721OpenSea {
+/**
+ * @dev Abstract of an OpenSea compliant contract
+ */
+abstract contract ERC721OpenSea is IERC721OpenSea {
   string private _baseTokenURI;
   string private _contractURI;
 

@@ -2,15 +2,16 @@
 
 pragma solidity ^0.8.0;
 
-//ERC721 interface
+//interface of an ERC721 compliant contract
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /**
- * @dev Required interface of an IERC721Exchange compliant contract.
+ * @dev Required interface of an BEP721 compliant contract.
  */
 interface IBEP721 is IERC721 {
   /**
-   * @dev Specifies the name by which other contracts will recognize the BEP-721 token 
+   * @dev Specifies the name by which other contracts will recognize 
+   *      the BEP-721 token 
    */
   function name() external view returns (string memory);
 

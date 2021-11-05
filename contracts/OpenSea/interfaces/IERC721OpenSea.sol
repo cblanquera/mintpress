@@ -2,11 +2,14 @@
 
 pragma solidity ^0.8.0;
 
+//interface of an ERC721 compliant contract
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
 /**
  * @dev see: https://docs.opensea.io/docs/1-structuring-your-smart-contract
  *      see: https://github.com/ProjectOpenSea/opensea-creatures/blob/master/contracts/ERC721Tradable.sol#L70-L86
  */
-interface IERC721OpenSea {
+interface IERC721OpenSea is IERC721 {
   /**
    * @dev The base URI for token data ex. https://creatures-api.opensea.io/api/creature/
    * Example Usage: 
