@@ -144,10 +144,7 @@ $ npm run dev
 
 ## API
 
-The marketplace is the main contract that implements all the extensions.
-Feel free to make your own version and use less or attach other ERC721
-extensions to it. The following covers the methods defined in this 
-contract.
+The following covers the methods defined in this contract.
 
 ### Deploy to Blockchain
 
