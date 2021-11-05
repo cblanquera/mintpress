@@ -7,6 +7,9 @@ pragma solidity ^0.8.0;
  * and exchanged considering royalty fees in multi classes
  */
 abstract contract MintpressExchangable {
+  // manual ReentrancyGuard
+  bool private _exchanging = false;
+
   /**
    * @dev abstract; defined in MultiClassOrderBook; Returns the 
    *      amount a `tokenId` is being offered for.
@@ -49,16 +52,21 @@ abstract contract MintpressExchangable {
   /**
    * @dev Allows for a sender to exchange `tokenId` for the listed amount
    */
-  function exchange(uint256 tokenId) external virtual payable {
+  function exchange(uint256 tokenId) 
+    external virtual payable 
+  {
     //get listing
     uint256 listing = listingOf(tokenId);
     //should be a valid listing
-    require(listing > 0, "MultiClassExchange: Token is not listed");
+    require(listing > 0, "Mintpress: Token is not listed");
     //value should equal the listing amount
     require(
       msg.value == listing,
-      "MultiClassExchange: Amount sent does not match the listing amount"
+      "Mintpress: Amount sent does not match the listing amount"
     );
+    // manual ReentrancyGuard
+    require(!_exchanging, "Mintpress: reentrant call");
+    _exchanging = true;
 
     //payout the fees
     uint256 remainder = _escrowFees(tokenId, msg.value);
@@ -70,5 +78,7 @@ abstract contract MintpressExchangable {
     _transfer(tokenOwner, _msgSender(), tokenId);
     //now that the sender owns it, delist it
     _delist(tokenId);
+
+    _exchanging = false;
   }
 }

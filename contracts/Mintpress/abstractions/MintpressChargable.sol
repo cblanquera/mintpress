@@ -62,7 +62,10 @@ abstract contract MintpressChargable is
    * @dev implements ERC2981 `royaltyInfo()`
    */
   function royaltyInfo(uint256 _tokenId, uint256 _salePrice) 
-    external view virtual returns(address receiver, uint256 royaltyAmount) 
+    external 
+    view 
+    virtual 
+    returns(address receiver, uint256 royaltyAmount) 
   {
     uint256 classId = classOf(_tokenId);
     if (_recipients[classId].length == 0) {

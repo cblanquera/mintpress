@@ -19,7 +19,9 @@ abstract contract MintpressListable is MultiClassOrderBook {
   /**
    * @dev Lists `tokenId` on the order book for `amount` in wei.
    */
-  function list(uint256 tokenId, uint256 amount) external virtual {
+  function list(uint256 tokenId, uint256 amount) 
+    external virtual 
+  {
     _list(tokenId, amount);
   }
 }

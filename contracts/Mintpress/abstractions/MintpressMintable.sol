@@ -15,6 +15,9 @@ import "../generators/RandomPrize.sol";
  * @dev Abstract that opens up various minting methods
  */
 abstract contract MintpressMintable is Ownable {
+  // manual ReentrancyGuard
+  bool private _minting = false;
+
   /**
    * @dev abstract; defined in MultiClassSupply; Returns true if 
    *      `classId` supply and size are equal
@@ -86,6 +89,9 @@ abstract contract MintpressMintable is Ownable {
       ) == owner(),
       "Mintpress: Invalid proof."
     );
+    // manual ReentrancyGuard
+    require(!_minting, "Mintpress: reentrant call");
+    _minting = true;
 
     //mint first and wait for errors
     _safeMint(recipient, tokenId);
@@ -95,6 +101,8 @@ abstract contract MintpressMintable is Ownable {
     _addClassSupply(classId, 1);
     //add to supply
     _addSupply(1);
+
+    _minting = false;
   }
 
   /**
@@ -177,6 +185,10 @@ abstract contract MintpressMintable is Ownable {
       rollToPrizeMap
     );
 
+    // manual ReentrancyGuard
+    require(!_minting, "Mintpress: reentrant call");
+    _minting = true;
+
     uint256 classId;
     // for each token in the pack
     for (uint8 i = 0; i < tokensInPack; i++) {
@@ -188,5 +200,7 @@ abstract contract MintpressMintable is Ownable {
         mint(classId, fromTokenId + i, recipient);
       }
     }
+
+    _minting = false;
   }
 }

@@ -50,7 +50,7 @@ abstract contract MultiClassFees is IMultiClassFees {
   {
     require(
       fee > 0,
-      "MultiClassFees: Fee should be more than 0"
+      "MultiClass: Fee should be more than 0"
     );
 
     //if no recipient
@@ -74,7 +74,7 @@ abstract contract MultiClassFees is IMultiClassFees {
     //safe check
     require(
       _fees[classId] <= TOTAL_ALLOWABLE_FEES,
-      "MultiClassFees: Exceeds allowable fees"
+      "MultiClass: Exceeds allowable fees"
     );
   }
 
@@ -86,7 +86,7 @@ abstract contract MultiClassFees is IMultiClassFees {
     //dont have to pay gas on things that dont matter
     require(
       _fee[classId][recipient] != 0,
-      "MultiClassFees: Recipient has no fees"
+      "MultiClass: Recipient has no fees"
     );
     //deduct total fees
     _fees[classId] -= _fee[classId][recipient];
@@ -118,7 +118,7 @@ abstract contract MultiClassFees is IMultiClassFees {
   {
     //get class from token
     uint256 classId = classOf(tokenId);
-    require(classId != 0, "MultiClassFees: Class does not exist");
+    require(classId != 0, "MultiClass: Class does not exist");
 
     //placeholder for recipient in the loop
     address recipient;
