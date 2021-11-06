@@ -5,7 +5,7 @@ const hardhat = require('hardhat')
 
 async function main() {
   await hre.run('compile');
-  const NFT = await hardhat.ethers.getContractFactory('ERC721Marketplace');
+  const NFT = await hardhat.ethers.getContractFactory('Mintpress');
   const nft = await NFT.attach(
     hardhat.config.networks[hardhat.config.defaultNetwork].contracts[0]
   )

@@ -5,8 +5,8 @@ const hardhat = require('hardhat')
 
 async function main() {
   await hre.run('compile')
-  const NFT = await hardhat.ethers.getContractFactory('ERC721Marketplace')
-  const nft = await NFT.deploy('Burdick Fantasy Club DEMO', 'DEMOBD')
+  const NFT = await hardhat.ethers.getContractFactory('Mintpress')
+  const nft = await NFT.deploy('Mintpress Collection DEMO', 'MPCD')
   await nft.deployed()
   console.log('NFT contract deployed to (update .env):', nft.address)
 }

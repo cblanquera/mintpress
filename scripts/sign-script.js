@@ -17,9 +17,9 @@ async function main() {
   await hre.run('compile');
 
   //make a message
-  const message = hashToken(1, 2, '0xD7D190cdC6A7053CD5Ee76E966a1b9056dbA4774')
-  //sign message
-  const wallet = '3c03e4dd8b370beccae5410d1bade4fa27e37b9f3c89bc8a16b5e33624c17411'
+  const message = hashToken(1, 2, '0xWalletAddress')
+  //sign message wallet PK
+  const wallet = 'PrivateKey'
   const signer = new ethers.Wallet(wallet);
 
   const signature = await signer.signMessage(message);

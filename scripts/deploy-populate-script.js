@@ -21,14 +21,12 @@ async function main() {
 
   await hre.run('compile');
 
-  const NFT = await hardhat.ethers.getContractFactory('ERC721Marketplace')
-  const nft = await NFT.deploy('Burdick Fantasy Club DEMO', 'DEMOBD')
+  const NFT = await hardhat.ethers.getContractFactory('Mintpress')
+  const nft = await NFT.deploy('Mintpress Collection DEMO', 'MPCD')
   await nft.deployed()
   console.log('NFT contract deployed to (update .env):', nft.address)
 
-  //Player 1 Card 
   await nft.register(1, 10, 'https://ipfs.io/ipfs/QmW8yrrvys7Cic2XedTVVt9W4ho6v4sndQv7K7x4Y7Td91')
-  //player 2 Card
   await nft.register(2, 5, 'https://ipfs.io/ipfs/QmNmbCX3rVZ1SJb6A3Yivu8aGmW8GohYuCtLPhohWH9UYs')
 
   const signers = await hardhat.ethers.getSigners()
