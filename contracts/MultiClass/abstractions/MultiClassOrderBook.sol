@@ -45,13 +45,13 @@ abstract contract MultiClassOrderBook is IMultiClassOrderBook {
     // even the contract owner cannot list a token
     require(
       ownerOf(tokenId) == _msgSender(),
-      "MultiClass: Only the token owner can list a token"
+      "Only the token owner can list a token"
     );
     //disallow free listings because solidity defaults amounts to zero
     //so it's impractical to determine a free listing from an unlisted one
     require(
       amount > 0,
-      "MultiClass: Listing amount should be more than 0"
+      "Listing amount should be more than 0"
     );
     //add the listing
     _book[tokenId] = amount;
@@ -68,13 +68,13 @@ abstract contract MultiClassOrderBook is IMultiClassOrderBook {
     // even the contract owner cannot delist a token
     require(
       owner == _msgSender(),
-      "MultiClass: Only the token owner can delist a token"
+      "Only the token owner can delist a token"
     );
     //this is for the benefit of the sender so they
     //dont have to pay gas on things that dont matter
     require(
       _book[tokenId] != 0,
-      "MultiClass: Token is not listed"
+      "Token is not listed"
     );
     //remove the listing
     delete _book[tokenId];

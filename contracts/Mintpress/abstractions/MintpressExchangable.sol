@@ -58,14 +58,14 @@ abstract contract MintpressExchangable {
     //get listing
     uint256 listing = listingOf(tokenId);
     //should be a valid listing
-    require(listing > 0, "Mintpress: Token is not listed");
+    require(listing > 0, "Token is not listed");
     //value should equal the listing amount
     require(
       msg.value == listing,
-      "Mintpress: Amount sent does not match the listing amount"
+      "Amount sent does not match the listing amount"
     );
     // manual ReentrancyGuard
-    require(!_exchanging, "Mintpress: reentrant call");
+    require(!_exchanging, "reentrant call");
     _exchanging = true;
 
     //payout the fees

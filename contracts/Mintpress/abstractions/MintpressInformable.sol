@@ -55,7 +55,7 @@ abstract contract MintpressInformable is ERC721OpenSea {
 
     require(
       classId > 0, 
-      "Mintpress: Token is not apart of a multiclass"
+      "Token is not apart of a multiclass"
     ); 
     
     return classURI(classId);

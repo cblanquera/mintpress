@@ -29,7 +29,7 @@ abstract contract MultiClassURIStorage is IMultiClassURIStorage {
   {
     require(
       bytes(_classURIs[classId]).length == 0,
-      "MultiClass: Class is already referenced"
+      "Class is already referenced"
     );
     _classURIs[classId] = data;
   }

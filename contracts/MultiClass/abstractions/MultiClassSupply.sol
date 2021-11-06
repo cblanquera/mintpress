@@ -50,7 +50,7 @@ abstract contract MultiClassSupply is IMultiClassSupply {
   {
     require (
       _size[classId] == 0,
-      "MultiClass: Class is already sized."
+      "Class is already sized."
     );
     _size[classId] = size;
   }
@@ -64,7 +64,7 @@ abstract contract MultiClassSupply is IMultiClassSupply {
     uint256 size = _supply[classId] + amount;
     require(
       _size[classId] == 0 || size <= _size[classId],
-      "MultiClass: Amount overflows class size."
+      "Amount overflows class size."
     );
     _supply[classId] = size;
   }

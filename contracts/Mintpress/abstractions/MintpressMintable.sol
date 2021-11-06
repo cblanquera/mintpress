@@ -76,7 +76,7 @@ abstract contract MintpressMintable is Ownable {
     bytes calldata proof
   ) external virtual {
     //check size
-    require(!classFilled(classId), "Mintpress: Class filled.");
+    require(!classFilled(classId), "Class filled.");
     //make sure the admin signed this off
     require(
       ECDSA.recover(
@@ -87,10 +87,10 @@ abstract contract MintpressMintable is Ownable {
         ),
         proof
       ) == owner(),
-      "Mintpress: Invalid proof."
+      "Invalid proof."
     );
     // manual ReentrancyGuard
-    require(!_minting, "Mintpress: reentrant call");
+    require(!_minting, "reentrant call");
     _minting = true;
 
     //mint first and wait for errors
@@ -113,7 +113,7 @@ abstract contract MintpressMintable is Ownable {
     public virtual onlyOwner
   {
     //check size
-    require(!classFilled(classId), "Mintpress: Class filled.");
+    require(!classFilled(classId), "Class filled.");
     //mint first and wait for errors
     _safeMint(recipient, tokenId);
     //then classify it
@@ -135,7 +135,7 @@ abstract contract MintpressMintable is Ownable {
     uint256 defaultSize,
     string memory seed
   ) external virtual onlyOwner {
-    require(defaultSize > 0, "Mintpress: Missing default size");
+    require(defaultSize > 0, "Missing default size");
     uint256[] memory rollToPrizeMap = new uint256[](classIds.length);
     uint256 size;
     uint256 supply;
@@ -173,7 +173,7 @@ abstract contract MintpressMintable is Ownable {
     //error
     require(
       tokensInPack <= maxRollValue, 
-      "Mintpress: Not enough tokens to make a mint pack"
+      "Not enough tokens to make a mint pack"
     );
 
     //now we can create a prize pool
@@ -186,7 +186,7 @@ abstract contract MintpressMintable is Ownable {
     );
 
     // manual ReentrancyGuard
-    require(!_minting, "Mintpress: reentrant call");
+    require(!_minting, "reentrant call");
     _minting = true;
 
     uint256 classId;

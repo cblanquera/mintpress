@@ -29,7 +29,7 @@ abstract contract MultiClass is IMultiClass {
   {
     require(
       _tokens[tokenId] == 0,
-      "MultiClass: Token is already classified"
+      "Token is already classified"
     );
     _tokens[tokenId] = classId;
   }

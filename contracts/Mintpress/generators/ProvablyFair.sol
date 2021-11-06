@@ -24,7 +24,7 @@ library ProvablyFair {
   {
     require(
       state.seed.length != 0, 
-      "ProvablyFair: Missing server seed."
+      "Missing server seed."
     );
     return keccak256(abi.encodePacked(state.seed));
   }
@@ -39,12 +39,12 @@ library ProvablyFair {
   ) internal view returns(uint256) {
     require(
       state.seed.length != 0, 
-      "ProvablyFair: Missing server seed."
+      "Missing server seed."
     );
 
     require(
       state.min < state.max, 
-      "ProvablyFair: Minimum is greater than maximum."
+      "Minimum is greater than maximum."
     );
 
     //roll the dice

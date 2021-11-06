@@ -259,7 +259,7 @@ describe('Mintpress Tests', function () {
         contractOwner.address,
         signatures[1]
       )
-    ).to.be.revertedWith('Mintpress: Invalid proof.')
+    ).to.be.revertedWith('Invalid proof.')
 
     //let the contract owner redeem a token an unclaimed token for themself using a valid signature
     expect(
@@ -269,7 +269,7 @@ describe('Mintpress Tests', function () {
         contractOwner.address,
         signatures[2]
       )
-    ).to.be.revertedWith('Mintpress: Invalid proof.')
+    ).to.be.revertedWith('Invalid proof.')
   })
 
   it('Should stress minting', async function () {
@@ -304,7 +304,7 @@ describe('Mintpress Tests', function () {
     //try to register a class again
     expect(
       contractOwner.withContract.register(classId, classSize, classURI)
-    ).to.be.revertedWith('MultiClass: Class is already referenced')
+    ).to.be.revertedWith('Class is already referenced')
 
     //try to mint the same token again
     expect(
@@ -317,7 +317,7 @@ describe('Mintpress Tests', function () {
     //try to mint again
     expect(
       contractOwner.withContract.mint(classId, 3, tokenOwner.address)
-    ).to.be.revertedWith('Mintpress: Class filled.')
+    ).to.be.revertedWith('Class filled.')
   })
 
   it('Should stress fees', async function () {
@@ -359,11 +359,11 @@ describe('Mintpress Tests', function () {
     //try to under allocate
     expect(
       owner.withContract.allocate(classId, manager.address, 0)
-    ).to.be.revertedWith('MultiClass: Fee should be more than 0')
+    ).to.be.revertedWith('Fee should be more than 0')
     //try to over allocate
     expect(
       owner.withContract.allocate(classId, manager.address, 10000)
-    ).to.be.revertedWith('MultiClass: Exceeds allowable fees')
+    ).to.be.revertedWith('Exceeds allowable fees')
 
     //manager now wants fee from 10% to 30%
     await owner.withContract.allocate(classId, manager.address, 3000)
@@ -379,7 +379,7 @@ describe('Mintpress Tests', function () {
     //remove fee of someone that hasn't been entered
     expect(
       owner.withContract.deallocate(classId, owner.address)
-    ).to.be.revertedWith('MultiClass: Recipient has no fees')
+    ).to.be.revertedWith('Recipient has no fees')
   })
 
   it('Should stress exchange', async function () {
@@ -459,16 +459,16 @@ describe('Mintpress Tests', function () {
     //let the buyer try to delist
     expect(
       buyer.withContract.delist(tokenId)
-    ).to.be.revertedWith('MultiClass: Token is not listed')
+    ).to.be.revertedWith('Token is not listed')
 
     //let the owner try to list the token for sale
     expect(
       contractOwner.withContract.list(tokenId, listedAmount)
-    ).to.be.revertedWith('MultiClass: Only the token owner can list a token')
+    ).to.be.revertedWith('Only the token owner can list a token')
     //let the buyer try to list the token for sale
     expect(
       buyer.withContract.list(tokenId, 0)
-    ).to.be.revertedWith('MultiClass: Listing amount should be more than 0')
+    ).to.be.revertedWith('Listing amount should be more than 0')
 
     //the buyer should now properly list i
     await buyer.withContract.list(tokenId, listedAmount)
@@ -476,7 +476,7 @@ describe('Mintpress Tests', function () {
     //let the owner try to delist the token
     expect(
       contractOwner.withContract.delist(tokenId)
-    ).to.be.revertedWith('MultiClass: Only the token owner can delist a token')
+    ).to.be.revertedWith('Only the token owner can delist a token')
     //the buyer should now properly delist it
     await buyer.withContract.delist(tokenId)
     expect(await contractOwner.withContract.listingOf(tokenId)).to.equal(0)
@@ -486,7 +486,7 @@ describe('Mintpress Tests', function () {
     //let the old token owner try to buy it for the right amount
     expect(
       tokenOwner.withContract.exchange(tokenId, { value: listedAmount })
-    ).to.be.revertedWith('Mintpress: Token is not listed')
+    ).to.be.revertedWith('Token is not listed')
 
     //list it again so we can try to exchange it
     await buyer.withContract.list(tokenId, listedAmount)
@@ -495,13 +495,13 @@ describe('Mintpress Tests', function () {
       buyer.withContract.exchange(tokenId, {
         value: ethers.utils.parseEther('1.0')
       })
-    ).to.be.revertedWith('Mintpress: Amount sent does not match the listing amount')
+    ).to.be.revertedWith('Amount sent does not match the listing amount')
     //let the old token owner buy it for the right amount
     tokenOwner.withContract.exchange(tokenId, { value: listedAmount })
     //let the old token owner try to buy it for the right amount again
     expect(
       tokenOwner.withContract.exchange(tokenId, { value: listedAmount })
-    ).to.be.revertedWith('Mintpress: Token is not listed')
+    ).to.be.revertedWith('Token is not listed')
   })
 
   it('Should support BEP721', async function () {
