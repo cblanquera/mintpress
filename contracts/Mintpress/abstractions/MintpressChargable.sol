@@ -19,6 +19,11 @@ abstract contract MintpressChargable is
   RoyaltiesV2, 
   Ownable 
 {
+  /*
+   * bytes4(keccak256("royaltyInfo(uint256,uint256)")) == 0x2a55205a
+   */
+  bytes4 internal constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
+
   /**
    * @dev Sets a fee that will be collected during the exchange method
    */

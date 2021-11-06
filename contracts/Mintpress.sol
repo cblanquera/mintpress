@@ -183,6 +183,10 @@ contract Mintpress is
       return true;
     }
 
+    if (interfaceId == MintpressChargable._INTERFACE_ID_ERC2981) {
+      return true;
+    }
+
     return super.supportsInterface(interfaceId);
   }
 
