@@ -383,6 +383,20 @@ $ cp .env.sample to .env
 $ npm install
 ```
 
+**For the `.env` file:**
+
+The `NETWORK` is relative to the network names found in your `hardhat.config.js`.
+
+For all the `*_CONTRACT_ADDRESS`, you can leave these blank. You can use 
+these whenever you decide to deploy a smart contract and get the contract 
+address.
+
+For all the `*_PRIVATE_KEY`, you should use a private key from a test 
+wallet. *(Don't use a real one until your ready to make it live)*
+
+For the `CMC_KEY` you can get that from https://pro.coinmarketcap.com/ . 
+This is used for the gas reporting.
+
  2. Setup Development Test Wallet
 
 Switch your MetaMask to Ropsten network and get some ETH from the faucet.
