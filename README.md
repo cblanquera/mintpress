@@ -374,7 +374,7 @@ Before submitting pull requests please agree to the following principles.
  - Looping cannot be scaled *(unpredictable gas)*
  - Mappings are preferred over structs *(cheaper gas)*
 
-## I Agree
+### I Agree
 
  1. Clone the repo from https://github.com/cblanquera/mintpress
 
