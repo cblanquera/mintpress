@@ -4,14 +4,111 @@ ERC721 NFT for everything. Compatible is Rarible, Mintable, OpenSea.
 Can be deployed onto any Ethreum Layer 2 including Polygon and Binance 
 Smart Chain.
 
-## 1. Install
+## Install
+
+```bash
+$ npm i mintpress --save 
+```
+
+## Usage
+
+Once installed, you can use the contracts in the library by importing them:
+
+```solidity
+pragma solidity ^0.8.0;
+
+import "mintpress/contracts/Mintpress.sol";
+
+contract MyCollectible is Mintpress {
+    constructor() Mintpress(
+      "MyCollectible", 
+      "MCO", 
+      "http://mycollectible.nft/contract.json", 
+      "http://mycollectible.nft/token/"
+    ) {
+    }
+}
+```
+
+> If you're new to smart contract development, head to Open Zeppelin's 
+guide to [Developing Smart Contracts](https://docs.openzeppelin.com/learn/developing-smart-contracts) 
+to learn about creating a new project and compiling your contracts.
+
+## Making or Integration with a Project
+
+ 1. You may want to install the following as dev dependencies.
+
+```json
+{
+  "@nomiclabs/hardhat-ethers": "^2.0.2",
+  "@nomiclabs/hardhat-waffle": "^2.0.1",
+  "chai": "^4.3.4",
+  "eslint": "7.30.0",
+  "eslint-config-next": "11.0.1",
+  "eth-gas-reporter": "git+https://github.com/lucaperret/eth-gas-reporter#6ac872b599adcaa8aab40808576e769c6872eb38",
+  "ethereum-waffle": "3.4.0",
+  "ethers": "5.4.1",
+  "hardhat": "2.4.3",
+  "hardhat-gas-reporter": "^1.0.4"
+}
+```
+
+> see: https://github.com/cblanquera/mintpress/blob/main/package.json#L25-L36
+for an updated list.
+
+ 2. Create a `hardhat.config.js`
+
+You can copy the one from this project. 
+https://github.com/cblanquera/mintpress/blob/main/hardhat.config.js
+
+ 3. Create a `.env` file
+
+```env
+# used to configure the code based on network see: hardhat.config.js
+NETWORK=hardhat
+
+# coin market cap key to estimate the gas cost in unit tests
+CMC_KEY=
+
+# localhost settings
+LOCALHOST_CONTRACT_ADDRESS=
+
+# mumbai testnet settings
+MUMBAI_PRIVATE_KEY=
+MUMBAI_CONTRACT_ADDRESS=
+
+# ropsten testnet settings
+ROPSTEN_PRIVATE_KEY=
+ROPSTEN_CONTRACT_ADDRESS=
+
+# binance testnet settings (ETH)
+PREBSC_PRIVATE_KEY=
+PREBSC_CONTRACT_ADDRESS=
+```
+
+The `NETWORK` is relative to the network names found in your `hardhat.config.js`.
+
+For all the `*_CONTRACT_ADDRESS`, you can leave these blank. You can use 
+these whenever you decide to deploy a smart contract and get the contract 
+address.
+
+For all the `*_PRIVATE_KEY`, you should use a private key from a test 
+wallet. *(Don't use a real one until your ready to make it live)*
+
+For the `CMC_KEY` you can get that from https://pro.coinmarketcap.com/ . 
+This is used for the gas reporting.
+
+
+## Contributing
+
+ 1. Clone the repo from https://github.com/cblanquera/mintpress
 
 ```bash
 $ cp .env.sample to .env
 $ npm install
 ```
 
-## 2. Setup Development Test Wallet
+ 2. Setup Development Test Wallet
 
 Switch your MetaMask to Ropsten network and get some ETH from the faucet.
 
@@ -27,7 +124,7 @@ choose `mumbai` from the options.
 
 > NOTE: You could be waiting between 10 to 30 minutes...
 
-## 3. Unit Testing
+ 3. Unit Testing
 
 Make sure in `.env`, change `NETWORK` to `hardhat`.
 
@@ -68,7 +165,7 @@ below shows the estimated gas fees for running each function.
 ·--------------------------------|-------------|-------------|-------------|---------------|-------------·
 ```
 
-## 4. Developing on a Local Host Node
+ 4. Developing on a Local Host Node
 
 Make sure in `.env`, change `NETWORK` to `localhost`. Then run the
 ethereum node server in a separate terminal with the following command.
@@ -125,7 +222,7 @@ and paste it in `.env`. Lastly run the following command.
 $ npm run dev
 ```
 
-## 5. Developing on Polygon MATIC TestNet
+ 5. Developing on Polygon MATIC TestNet
 
 Make sure in `.env`, change `NETWORK` to `mumbai`.
 

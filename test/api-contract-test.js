@@ -1,5 +1,6 @@
 const { expect } = require('chai')
 const utils = require('../library/utils')
+const artifact = require('../artifacts/contracts/Mintpress.sol/Mintpress.json')
 
 async function loadContract(name, ...params) {
   //deploy the contract
@@ -8,7 +9,7 @@ async function loadContract(name, ...params) {
   await contract.deployed()
   //get the signers
   const signers = await ethers.getSigners(1)
-  return utils.loadContract('public', signers[0].address, contract.address)
+  return utils.loadContract('public', artifact, signers[0].address, contract.address)
 }
 
 describe('Contract Library', function() {

@@ -2,7 +2,6 @@ const VM_ERROR = "Error: VM Exception while processing transaction: reverted wit
 
 const ethers = require('ethers')
 const hardhat = require('hardhat')
-const artifact = require('../artifacts/contracts/Mintpress.sol/Mintpress.json')
 
 const contracts = {
   owner: require('./contract/owner'),
@@ -11,7 +10,7 @@ const contracts = {
 }
 
 module.exports = {
-  loadContract(name, contractOwner, contractAddress) {
+  loadContract(name, artifact, contractOwner, contractAddress) {
     const Contract = contracts[name]
     const network = hardhat.config.networks[hardhat.config.defaultNetwork]
     const provider = new ethers.providers.JsonRpcProvider(network.url)
