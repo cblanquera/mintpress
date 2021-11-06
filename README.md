@@ -98,147 +98,6 @@ wallet. *(Don't use a real one until your ready to make it live)*
 For the `CMC_KEY` you can get that from https://pro.coinmarketcap.com/ . 
 This is used for the gas reporting.
 
-
-## Contributing
-
- 1. Clone the repo from https://github.com/cblanquera/mintpress
-
-```bash
-$ cp .env.sample to .env
-$ npm install
-```
-
- 2. Setup Development Test Wallet
-
-Switch your MetaMask to Ropsten network and get some ETH from the faucet.
-
-- [https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/](https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
-- [https://faucet.dimensions.network/](https://faucet.dimensions.network/)
-- [https://faucet.metamask.io/](https://faucet.metamask.io/)
-- [https://faucet.ropsten.be/](https://faucet.ropsten.be/)
-- [https://faucet.bitfwd.xyz/](https://faucet.bitfwd.xyz/)
-
-For MATIC theres only one place,
-[https://faucet.matic.network/](https://faucet.matic.network/). Make sure you
-choose `mumbai` from the options.
-
-> NOTE: You could be waiting between 10 to 30 minutes...
-
- 3. Unit Testing
-
-Make sure in `.env`, change `NETWORK` to `hardhat`.
-
-```bash
-$ npm test
-```
-
-After running the tests you should see a gas chart. The last table 
-below shows the estimated gas fees for running each function.
-
-```
-·--------------------------------|---------------------------|-------------|-----------------------------·
-|      Solc version: 0.8.9       ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 12450000 gas  │
-·································|···························|·············|······························
-|  Methods                       ·              200 gwei/gas               ·       4563.48 usd/eth       │
-··············|··················|·············|·············|·············|···············|··············
-|  Contract   ·  Method          ·  Min        ·  Max        ·  Avg        ·  # calls      ·  usd (avg)  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  allocate        ·      36422  ·     114186  ·      90340  ·            9  ·      82.45  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  deallocate      ·          -  ·          -  ·      25136  ·            1  ·      22.94  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  delist          ·          -  ·          -  ·      15517  ·            1  ·      14.16  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  exchange        ·      56937  ·     100907  ·      71594  ·            3  ·      65.34  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  lazyMint        ·      97947  ·     151764  ·     112037  ·            4  ·     102.26  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  list            ·          -  ·          -  ·      48178  ·            4  ·      43.97  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  mint            ·      94623  ·     145923  ·     138594  ·            7  ·     126.49  │
-··············|··················|·············|·············|·············|···············|··············
-|  Mintpress  ·  register        ·      47719  ·      70006  ·      67980  ·           11  ·      62.05  │
-··············|··················|·············|·············|·············|···············|··············
-|  Deployments                   ·                                         ·  % of limit   ·             │
-·································|·············|·············|·············|···············|··············
-|  Mintpress                     ·          -  ·          -  ·    3302492  ·       26.5 %  ·    3014.17  │
-·--------------------------------|-------------|-------------|-------------|---------------|-------------·
-```
-
- 4. Developing on a Local Host Node
-
-Make sure in `.env`, change `NETWORK` to `localhost`. Then run the
-ethereum node server in a separate terminal with the following command.
-
-```bash
-$ npx hardhat node
-
-Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
-...
-```
-
-Next run the following script to deploy the contract to your local node and
-pre-populate the storage.
-
-```bash
-$ npx hardhat run scripts/deploy-populate-script.js --network localhost
-
-NFT contract deployed to (update .env): 0xCONTRACT_ADDRESS
-
-Token Classes:
-
- - Class 1 has a limit of 10 tokens
-   https://ipfs.io/ipfs/QmXrknumwVrvNhgPFUJSEoakGLsF4NJgQ6cgdx1SBA8PUJ
- - Class 2 has a limit of 3 tokens
-   https://ipfs.io/ipfs/QmXbPZG5kcB9bzJRz6rdgKoDSTNAufMCRojZcaRtwigfmV
-
-Fees:
-
- - 0xWALLET_ADDRESS_1 wants 20% of class 1
- - 0xWALLET_ADDRESS_2 wants 10% of class 1
-
-Minted Tokens:
-
- - 0xWALLET_ADDRESS_3 owns token 1 in class 1
- - 0xWALLET_ADDRESS_4 owns token 2 in class 1
- - 0xWALLET_ADDRESS_3 owns token 3 in class 2
- - 0xWALLET_ADDRESS_4 owns token 4 in class 2
-
-Air Drops:
-
- - 0xWALLET_ADDRESS_3 can redeem token 5 in class 1
- - 0xWALLET_ADDRESS_4 can redeem token 6 in class 1
-
-Order Book:
-
- - 0xWALLET_ADDRESS_3 listed token 1 for sale for 0.001 ETH/MATIC
-```
-
-Lastly, copy the contract hash found in the results given after running 
-`npx hardhat run scripts/deploy-populate-script.js --network localhost` 
-and paste it in `.env`. Lastly run the following command.
-
-```bash
-$ npm run dev
-```
-
- 5. Developing on Polygon MATIC TestNet
-
-Make sure in `.env`, change `NETWORK` to `mumbai`.
-
-Next run the following script to deploy the contract to your local node and
-pre-populate the storage.
-
-```bash
-$ npx hardhat run scripts/deploy-script.js --network localhost
-```
-
-Lastly run the following command.
-
-```bash
-$ npm run dev
-```
-
 ## API
 
 The following covers the methods defined in this contract.
@@ -506,9 +365,151 @@ Returns the amount *(in wei)* a `tokenId` is being offered for.
 await nft.listingOf(200) //--> 1.5 ether
 ```
 
-## Contributing to the Project
+## Contributing
+
+Before submitting pull requests please agree to the following principles.
 
  - Manually assigning IDs is preferred over enumerating *(cheaper gas)*
  - Batch minting is discouraged *(impractical gas cost)*
  - Looping cannot be scaled *(unpredictable gas)*
  - Mappings are preferred over structs *(cheaper gas)*
+
+## I Agree
+
+ 1. Clone the repo from https://github.com/cblanquera/mintpress
+
+```bash
+$ cp .env.sample to .env
+$ npm install
+```
+
+ 2. Setup Development Test Wallet
+
+Switch your MetaMask to Ropsten network and get some ETH from the faucet.
+
+- [https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/](https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
+- [https://faucet.dimensions.network/](https://faucet.dimensions.network/)
+- [https://faucet.metamask.io/](https://faucet.metamask.io/)
+- [https://faucet.ropsten.be/](https://faucet.ropsten.be/)
+- [https://faucet.bitfwd.xyz/](https://faucet.bitfwd.xyz/)
+
+For MATIC theres only one place,
+[https://faucet.matic.network/](https://faucet.matic.network/). Make sure you
+choose `mumbai` from the options.
+
+> NOTE: You could be waiting between 10 to 30 minutes...
+
+ 3. Unit Testing
+
+Make sure in `.env`, change `NETWORK` to `hardhat`.
+
+```bash
+$ npm test
+```
+
+After running the tests you should see a gas chart. The last table 
+below shows the estimated gas fees for running each function.
+
+```
+·--------------------------------|---------------------------|-------------|-----------------------------·
+|      Solc version: 0.8.9       ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 12450000 gas  │
+·································|···························|·············|······························
+|  Methods                       ·              200 gwei/gas               ·       4563.48 usd/eth       │
+··············|··················|·············|·············|·············|···············|··············
+|  Contract   ·  Method          ·  Min        ·  Max        ·  Avg        ·  # calls      ·  usd (avg)  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  allocate        ·      36422  ·     114186  ·      90340  ·            9  ·      82.45  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  deallocate      ·          -  ·          -  ·      25136  ·            1  ·      22.94  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  delist          ·          -  ·          -  ·      15517  ·            1  ·      14.16  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  exchange        ·      56937  ·     100907  ·      71594  ·            3  ·      65.34  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  lazyMint        ·      97947  ·     151764  ·     112037  ·            4  ·     102.26  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  list            ·          -  ·          -  ·      48178  ·            4  ·      43.97  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  mint            ·      94623  ·     145923  ·     138594  ·            7  ·     126.49  │
+··············|··················|·············|·············|·············|···············|··············
+|  Mintpress  ·  register        ·      47719  ·      70006  ·      67980  ·           11  ·      62.05  │
+··············|··················|·············|·············|·············|···············|··············
+|  Deployments                   ·                                         ·  % of limit   ·             │
+·································|·············|·············|·············|···············|··············
+|  Mintpress                     ·          -  ·          -  ·    3302492  ·       26.5 %  ·    3014.17  │
+·--------------------------------|-------------|-------------|-------------|---------------|-------------·
+```
+
+ 4. Developing on a Local Host Node
+
+Make sure in `.env`, change `NETWORK` to `localhost`. Then run the
+ethereum node server in a separate terminal with the following command.
+
+```bash
+$ npx hardhat node
+
+Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
+...
+```
+
+Next run the following script to deploy the contract to your local node and
+pre-populate the storage.
+
+```bash
+$ npx hardhat run scripts/deploy-populate-script.js --network localhost
+
+NFT contract deployed to (update .env): 0xCONTRACT_ADDRESS
+
+Token Classes:
+
+ - Class 1 has a limit of 10 tokens
+   https://ipfs.io/ipfs/QmXrknumwVrvNhgPFUJSEoakGLsF4NJgQ6cgdx1SBA8PUJ
+ - Class 2 has a limit of 3 tokens
+   https://ipfs.io/ipfs/QmXbPZG5kcB9bzJRz6rdgKoDSTNAufMCRojZcaRtwigfmV
+
+Fees:
+
+ - 0xWALLET_ADDRESS_1 wants 20% of class 1
+ - 0xWALLET_ADDRESS_2 wants 10% of class 1
+
+Minted Tokens:
+
+ - 0xWALLET_ADDRESS_3 owns token 1 in class 1
+ - 0xWALLET_ADDRESS_4 owns token 2 in class 1
+ - 0xWALLET_ADDRESS_3 owns token 3 in class 2
+ - 0xWALLET_ADDRESS_4 owns token 4 in class 2
+
+Air Drops:
+
+ - 0xWALLET_ADDRESS_3 can redeem token 5 in class 1
+ - 0xWALLET_ADDRESS_4 can redeem token 6 in class 1
+
+Order Book:
+
+ - 0xWALLET_ADDRESS_3 listed token 1 for sale for 0.001 ETH/MATIC
+```
+
+Lastly, copy the contract hash found in the results given after running 
+`npx hardhat run scripts/deploy-populate-script.js --network localhost` 
+and paste it in `.env`. Lastly run the following command.
+
+```bash
+$ npm run dev
+```
+
+ 5. Developing on Polygon MATIC TestNet
+
+Make sure in `.env`, change `NETWORK` to `mumbai`.
+
+Next run the following script to deploy the contract to your local node and
+pre-populate the storage.
+
+```bash
+$ npx hardhat run scripts/deploy-script.js --network localhost
+```
+
+Lastly run the following command.
+
+```bash
+$ npm run dev
+```
