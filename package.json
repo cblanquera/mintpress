@@ -1,6 +1,6 @@
 {
   "name": "mintpress",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "build": "next build",
     "compile": "hardhat compile",
