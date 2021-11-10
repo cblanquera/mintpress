@@ -35,13 +35,12 @@ class Contract extends PublicContract {
    *
    * @param *number classId Arbitrary class ID
    * @param *number tokenId Arbitrary token ID (should be unique)
-   * @param *number rating Token rating
    * @param *string recipient Wallet address to send the token to
    *
    * @return object The nft contract instance.
    */
-  async mint(classId, tokenId, rating, recipient) {
-    return { tx: await this.contract.mint(classId, tokenId, rating, recipient) }
+  async mint(classId, tokenId, recipient) {
+    return { tx: await this.contract.mint(classId, tokenId, recipient) }
   }
 
   /**

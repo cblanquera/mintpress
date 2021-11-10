@@ -22,7 +22,12 @@ async function main() {
   await hre.run('compile');
 
   const NFT = await hardhat.ethers.getContractFactory('Mintpress')
-  const nft = await NFT.deploy('Mintpress Collection DEMO V1', 'MPCDI')
+  const nft = await NFT.deploy(
+    'Mintpress Collection DEMO V1', 
+    'MPCDI',
+    'http://mintpress.com/token/',
+    'http://mintpress.com/contract.json'
+  )
   await nft.deployed()
   console.log('NFT contract deployed to (update .env):', nft.address)
 
@@ -32,17 +37,17 @@ async function main() {
   const signers = await hardhat.ethers.getSigners()
 
   //the first 2 signers are token holders
-  await nft.mint(1, 1, 90, signers[1].address)
-  await nft.mint(1, 2, 80, signers[2].address)
-  await nft.mint(2, 3, 70, signers[1].address)
-  await nft.mint(2, 4, 60, signers[2].address)
+  await nft.mint(1, 1, signers[1].address)
+  await nft.mint(1, 2, signers[2].address)
+  await nft.mint(2, 3, signers[1].address)
+  await nft.mint(2, 4, signers[2].address)
 
   //make a message (its a buffer)
   const messages = [
-    hashToken(1, 5, 50, signers[1].address),
-    hashToken(1, 6, 40, signers[2].address),
-    hashToken(2, 7, 30, signers[1].address),
-    hashToken(2, 8, 20, signers[2].address)
+    hashToken(1, 5, signers[1].address),
+    hashToken(1, 6, signers[2].address),
+    hashToken(2, 7, signers[1].address),
+    hashToken(2, 8, signers[2].address)
   ]
 
   //let the contract owner sign it
@@ -54,7 +59,7 @@ async function main() {
   ]
 
   //first token owner lists their token 1 for sale
-  const Contract = await ethers.getContractFactory('ERC721Marketplace', signers[1])
+  const Contract = await ethers.getContractFactory('Mintpress', signers[1])
   const signer1Contract = await Contract.attach(nft.address)
   await signer1Contract.list(1, ethers.utils.parseEther('0.001'))
 

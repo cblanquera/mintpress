@@ -18,7 +18,7 @@ interface IERC721OpenSea is IERC721 {
   function baseTokenURI() external view returns (string memory);
 
   /**
-   * @dev The URI for contract data ex. https://creatures-api.opensea.io/contract/opensea-creatures
+   * @dev The URI for contract data ex. https://creatures-api.opensea.io/contract/opensea-creatures/contract.json
    * Example Format:
    * {
    *   "name": "OpenSea Creatures",
