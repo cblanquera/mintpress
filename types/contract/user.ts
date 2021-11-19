@@ -25,4 +25,21 @@ export default class Contract extends PublicContract {
   async list(tokenId: number, amount: number): Promise<TX> {
     return { tx: await this.contract.list(tokenId, amount) }
   }
+
+  /**
+   * Allows for the creator to make an offering on their tokens
+   */
+   async makeOffer(
+    classId: number, 
+    offerAmount: number, 
+    offerStart: Date,
+    offerEnd: Date
+  ): Promise<TX> {
+    return { tx: await this.contract.makeOffer(
+      classId, 
+      offerAmount, 
+      Math.floor(offerStart.getTime() / 1000),
+      Math.floor(offerEnd.getTime() / 1000)
+    ) };
+  }
 }

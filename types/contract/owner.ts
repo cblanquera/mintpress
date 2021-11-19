@@ -26,6 +26,30 @@ export default class Contract extends PublicContract {
   }
 
   /**
+   * Removes all fees of a `classId`.
+   */
+  async deallocateAll(classId: number): Promise<TX> {
+    return { tx: await this.contract.deallocateAll(classId) };
+  }
+
+  /**
+   * Allows for the creator to make an offering on their tokens
+   */
+   async makeOffer(
+    classId: number, 
+    offerAmount: number, 
+    offerStart: Date,
+    offerEnd: Date
+  ): Promise<TX> {
+    return { tx: await this.contract.makeOffer(
+      classId, 
+      offerAmount, 
+      Math.floor(offerStart.getTime() / 1000),
+      Math.floor(offerEnd.getTime() / 1000)
+    ) };
+  }
+
+  /**
    * Mints `tokenId`, classifies it as `classId` and transfers to `recipient`.
    */
   async mint(
@@ -46,6 +70,19 @@ export default class Contract extends PublicContract {
     uri: string
   ): Promise<TX> {
     return { tx: await this.contract.register(classId, size, uri) };
+  }
+
+  /**
+   * Registers a new `classId` with max token assignment `size`
+   * that references a `uri`.
+   */
+  async registerToCreator(
+    classId: number, 
+    size: number, 
+    uri: string,
+    creator: string
+  ): Promise<TX> {
+    return { tx: await this.contract.registerToCreator(classId, size, uri, creator) };
   }
 
   /**

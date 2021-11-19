@@ -98,6 +98,23 @@ export default class Contract {
   }
 
   /**
+   * Allows for consumers to buy and mint tokens themselves
+   */
+   async payAndMint(
+    classId: number, 
+    tokenId: number, 
+    recipient: string, 
+    amount: number
+  ): Promise<TX> {
+    return { tx: await this.contract.payAndMint(
+      classId, 
+      tokenId, 
+      recipient,
+      { value: amount }
+    ) };
+  }
+
+  /**
    * Returns the owner of `tokenId`
    */
   async ownerOf(tokenId: number): Promise<string> {

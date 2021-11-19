@@ -16,8 +16,12 @@ export type MintpressContract = {
   totalSupply: Function;
   allocate: Function;
   deallocate: Function;
+  deallocateAll: Function;
+  makeOffer: Function;
   mint: Function;
+  payAndMint: Function;
   register: Function;
+  registerToCreator: Function;
   burn: Function;
   delist: Function;
   list: Function;
