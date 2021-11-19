@@ -1,5 +1,5 @@
 const { expect } = require('chai')
-const IPFS = require('../library/ipfs')
+const IPFS = require('../library/ipfs').default
 
 describe('IPFS Library', function() {
   it('It should generate content identifiers', async function() {

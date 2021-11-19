@@ -1,4 +1,4 @@
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import hardhat from 'hardhat';
 import { HardhatNetworkConfig } from 'hardhat/types';
 

@@ -5,7 +5,7 @@ export default {
   /**
    * Creates a random wallet
    */
-  async createWallet() {
+  createWallet() {
     return web3.eth.accounts.create();
   },
 
