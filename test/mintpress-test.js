@@ -652,40 +652,165 @@ describe('Mintpress Tests', function () {
     //----------------------------------------//
     // This is the class setup
     const classId1 = 100
-    const classSize1 = 3
+    const classSize1 = 0
     const classURI1 = 'ipfs://abc123'
 
     const classId2 = 200
-    const classSize2 = 0
+    const classSize2 = 5
     const classURI2 = 'ipfs://def234'
 
     const classId3 = 300
-    const classSize3 = 3
+    const classSize3 = 4
     const classURI3 = 'ipfs://ghi345'
+
+    const classId4 = 400
+    const classSize4 = 3
+    const classURI4 = 'ipfs://jkl456'
+
+    const classId5 = 500
+    const classSize5 = 2
+    const classURI5 = 'ipfs://mno567'
+
+    const classId6 = 600
+    const classSize6 = 1
+    const classURI6 = 'ipfs://pqr678'
 
     await contractOwner.withContract.register(classId1, classSize1, classURI1)
     await contractOwner.withContract.register(classId2, classSize2, classURI2)
     await contractOwner.withContract.register(classId3, classSize3, classURI3)
+    await contractOwner.withContract.register(classId4, classSize4, classURI4)
+    await contractOwner.withContract.register(classId5, classSize5, classURI5)
+    await contractOwner.withContract.register(classId6, classSize6, classURI6)
+
+    //----------------------------------------//
+    // This is the test
+    const tokensInPack = 3
+    const defaultSize = 6
+    let totalSize = defaultSize + classSize2 + classSize3 + classSize4 + classSize5 + classSize6;
+    for (let j = 0; totalSize > tokensInPack; j++) {
+      const fromTokenId = 200 + (j * tokensInPack)
+      await contractOwner.withContract.mintPack(
+        [classId1, classId2, classId3, classId4, classId5, classId6], 
+        fromTokenId, 
+        tokenOwner.address, 
+        tokensInPack, 
+        defaultSize, 
+        'client seed'
+      )
+      for(let i = 0; i < tokensInPack; i++) {
+        expect(await contractOwner.withContract.ownerOf(fromTokenId + i)).to.equal(tokenOwner.address)
+        //console.log(parseInt(await contractOwner.withContract.classOf(fromTokenId + i)))
+      }
+      totalSize -= tokensInPack;
+    }
+    
+  })
+
+
+
+  it('Should make offer, pay and mint', async function () {
+    const [contractOwner, creator, manager, tokenOwner, buyer] = await getSigners(
+      'Mintpress',
+      'Mintpress Collection',
+      'MPC',
+      'http://mintpress.nft/contract.json',
+      'http://mintpress.nft/token/'
+    )
+
+    //----------------------------------------//
+    // These are the current balance states
+    creator.state = parseFloat(
+      ethers.utils.formatEther(await creator.getBalance())
+    )
+
+    manager.state = parseFloat(
+      ethers.utils.formatEther(await manager.getBalance())
+    )
+
+    tokenOwner.state = parseFloat(
+      ethers.utils.formatEther(await tokenOwner.getBalance())
+    )
+
+    buyer.state = parseFloat(
+      ethers.utils.formatEther(await buyer.getBalance())
+    )
+
+    //----------------------------------------//
+    // This is the class setup
+    const classId = 100
+    const classSize = 1
+    const classURI = 'ipfs://abc123'
+    await contractOwner.withContract.registerToCreator(
+      classId, 
+      classSize, 
+      classURI, 
+      creator.address
+    )
+    expect(await contractOwner.withContract.classURI(classId)).to.equal(classURI)
+
+    const offerAmount = ethers.utils.parseEther('10.0')
+    const offerStart = Math.floor(Date.now() / 1000) - 1000
+    const offerEnd = Math.floor(Date.now() / 1000) + 1000
+    await contractOwner.withContract.makeOffer(
+      classId, 
+      offerAmount, 
+      offerStart,
+      offerEnd
+    )
+
+    //----------------------------------------//
+    // This is the fee setup
+    //The creator wants 20% (2000 is 20.00%)
+    await contractOwner.withContract.allocate(classId, creator.address, 2000)
+    expect(
+      await contractOwner.withContract.classFeeOf(classId, creator.address)
+    ).to.equal(2000)
+
+    //The manager wants 10% (1000 is 10.00%)
+    await contractOwner.withContract.allocate(classId, manager.address, 1000)
+    expect(
+      await contractOwner.withContract.classFeeOf(classId, manager.address)
+    ).to.equal(1000)
+
+    //total fees should now be 30.00%
+    expect(await contractOwner.withContract.classFees(classId)).to.equal(3000)
 
     //----------------------------------------//
     // This is the minting
-    const fromTokenId = 200
-    const tokensInPack = 10
-    const defaultSize = 4
-    //fast forward ... (go straight to the token owner)
-    await contractOwner.withContract.mintPack(
-      [classId1, classId2, classId3], 
-      fromTokenId, 
+    const tokenId = 200
+    await buyer.withContract.payAndMint(
+      classId, 
+      tokenId, 
       tokenOwner.address, 
-      tokensInPack, 
-      defaultSize, 
-      'client seed'
+      { value: offerAmount }
     )
 
     //----------------------------------------//
     // This is the test
-    for(let i = 0; i < tokensInPack; i++) {
-      expect(await contractOwner.withContract.ownerOf(fromTokenId + i)).to.equal(tokenOwner.address)
-    }
+    expect(
+      ethers.utils.formatEther(
+        await ethers.provider.getBalance(contractOwner.withContract.address)
+      )
+    ).to.equal('0.0')
+
+    expect(parseFloat(
+      ethers.utils.formatEther(await creator.getBalance())
+    ) - parseFloat(creator.state)).to.equal(9)
+
+    expect(parseFloat(
+      ethers.utils.formatEther(await manager.getBalance())
+    ) - parseFloat(manager.state)).to.equal(1)
+
+    expect(parseFloat(
+      ethers.utils.formatEther(await tokenOwner.getBalance())
+    ) - parseFloat(tokenOwner.state)).to.equal(0)
+
+    expect(
+      Math.ceil(
+        parseFloat(
+          ethers.utils.formatEther(await buyer.getBalance())
+        ) - parseFloat(buyer.state)
+      )
+    ).to.equal(-10)
   })
 })

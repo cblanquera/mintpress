@@ -111,6 +111,19 @@ abstract contract MultiClassFees is IMultiClassFees {
   }
 
   /**
+   * @dev Removes all fees from a `classId`
+   */
+  function _deallocateFees(uint256 classId) internal virtual {
+    //zero out total fees
+    _fees[classId] = 0;
+    //remove fees from the map
+    for (uint i = 0; i < _recipients[classId].length; i++) {
+      delete _fee[classId][_recipients[classId][i]];
+      delete _recipients[classId][i];
+    }
+  }
+
+  /**
    * @dev Pays the amount to the recipients
    */
   function _escrowFees(uint256 tokenId, uint256 amount)

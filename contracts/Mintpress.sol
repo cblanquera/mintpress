@@ -145,6 +145,20 @@ contract Mintpress is
   {
     return super.name();
   }
+
+  /**
+   * @dev override; super defined in Ownable; Returns the address of 
+   *      the current owner. 
+   */
+  function owner() 
+    public 
+    view 
+    virtual 
+    override(Ownable, MintpressMintable) 
+    returns (address) 
+  {
+    return super.owner();
+  }
   
   /**
    * @dev override; super defined in ERC721; Returns the owner of 
@@ -163,14 +177,38 @@ contract Mintpress is
   /**
    * @dev References `classId` to `data` and `size`
    */
-  function register(uint256 classId, uint256 size, string memory uri)
-    external virtual onlyOwner
-  {
+  function register(
+    uint256 classId, 
+    uint256 size,
+    string memory uri
+  ) external virtual onlyOwner {
     _setClassURI(classId, uri);
     //if size was set, fix it. Setting a zero size means no limit.
     if (size > 0) {
       _fixClassSize(classId, size);
     }
+  }
+
+  /**
+   * @dev References `classId` to `data` and `size`
+   */
+  function registerToCreator(
+    uint256 classId, 
+    uint256 size,
+    string memory uri,
+    address creator
+  ) public virtual onlyOwner {
+    _setClassURI(classId, uri);
+    //if size was set, fix it. Setting a zero size means no limit.
+    if (size > 0) {
+      _fixClassSize(classId, size);
+    }
+
+    if (creator == address(0)) {
+      creator = owner();
+    }
+
+    _setCreator(classId, creator);
   }
 
   /**
@@ -288,7 +326,7 @@ contract Mintpress is
   function _escrowFees(uint256 tokenId, uint256 amount)
     internal 
     virtual 
-    override(MintpressExchangable, MultiClassFees) 
+    override(MintpressExchangable, MintpressMintable, MultiClassFees) 
     returns(uint256) 
   {
     return super._escrowFees(tokenId, amount);
@@ -302,7 +340,12 @@ contract Mintpress is
     internal 
     view 
     virtual 
-    override(Context, MultiClassOrderBook, MintpressExchangable) 
+    override(
+      Context, 
+      MultiClassOrderBook, 
+      MintpressMintable, 
+      MintpressExchangable
+    ) 
     returns(address) 
   {
     return super._msgSender();

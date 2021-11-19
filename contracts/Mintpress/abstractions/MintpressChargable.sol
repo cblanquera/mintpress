@@ -41,6 +41,15 @@ abstract contract MintpressChargable is
   {
     _deallocateFee(classId, recipient);
   }
+
+  /**
+   * @dev Removes a fee
+   */
+  function deallocateAll(uint256 classId)
+    external virtual onlyOwner
+  {
+    _deallocateFees(classId);
+  }
   
   /**
    * @dev implements Rari getRaribleV2Royalties()
