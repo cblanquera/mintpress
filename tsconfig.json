@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["es2020", "es7", "es6", "dom"],
+    "module": "commonjs",
+    "noUnusedLocals": true,
+    "baseUrl": "./types",
+    "outDir": "library/",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": false,
+    "strict": true,
+    "target": "es6",
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "test", "library"]
+}
